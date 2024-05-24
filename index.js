@@ -5,11 +5,11 @@ const authRoutes = require('./routes/authenticate');
 const app = express();
 
 app.use(express.static('public'));
-app.use(authRoutes);
+app.use(express.json());
 
 app.set('view engine', 'ejs');
 
-const dbURI = `mongodb+srv://deshpandesagar15613:oGzEbxyvGaJazNDD@authentication.pvbaqd7.mongodb.net/?retryWrites=true&w=majority&appName=Authentication`;
+const dbURI = "mongodb+srv://deshpandesagar15613:oGzEbxyvGaJazNDD@authentication.pvbaqd7.mongodb.net/";
 
 mongoose.connect(dbURI)
 .then(() => {
@@ -18,6 +18,9 @@ mongoose.connect(dbURI)
 .catch((err) => {
     console.log(err);
 });
+
+app.get('/', (req, res) => res.render('home'));
+app.use(authRoutes);
 
 const PORT = 5000 || process.env.PORT;
 
