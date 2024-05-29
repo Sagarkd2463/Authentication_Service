@@ -27,7 +27,8 @@ app.get('/', (req, res) => res.render('home'));
 app.get('/smoothies', requireAuth, (req, res) => {
     res.render('smoothies');
 });
-app.use(authRoutes);
+
+app.use('/auth', authRoutes);
 
 const PORT = 5000 || process.env.PORT;
 
