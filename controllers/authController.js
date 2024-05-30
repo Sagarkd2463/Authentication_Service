@@ -72,7 +72,3 @@ module.exports.logout_get = (req, res) => {
     res.cookie('jwt', '', { session: 1 });
     res.redirect('/');
 }
-
-module.exports.login_google = (req, res) => {
-    res.send('Logging with google');
-};
