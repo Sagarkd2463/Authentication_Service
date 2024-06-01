@@ -34,7 +34,9 @@ mongoose.connect(dbURI)
     });
 
 app.get('*', checkCurrentUser);
-app.get('/', (req, res) => res.render('home'));
+app.get('/', (req, res) => {
+    res.render('home', { user: req.user });
+});
 app.get('/smoothies', requireAuth, (req, res) => {
     res.render('smoothies');
 });

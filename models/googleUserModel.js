@@ -6,6 +6,9 @@ const googleUserSchema = new mongoose.Schema({
     },
     googleId: {
         type: String
+    },
+    thumbnail: {
+        type: String
     }
 });
 
