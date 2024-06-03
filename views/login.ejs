@@ -1,6 +1,6 @@
 <%- include('./partials/header') -%> 
 
-<form>
+<form enctype="multipart/form-data">
     <h2>Log In</h2>
     <label for="email">Email</label>
     <input type="email" name="email" required>
@@ -17,7 +17,21 @@
     </header>
 
     <main>
-        <a href="/google" class="google-btn">Google+ </a>
+        <button>
+            <a href="/auth/google" class="google-btn">Sign in with Google+ </a>
+        </button>
+        <br>
+        <button>
+            <a href="/auth/github" class="github-btn">Sign in with Github </a>
+        </button>
+        <br>
+        <button>
+            <a href="/auth/facebook" class="facebook-btn">Sign in with Facebook</a>
+        </button>
+        <br>
+        <button>
+            <a href="/auth/linkedin" class="linkedin-btn">Sign in with LinkedIn</a>
+        </button>
     </main>
 </form>
 

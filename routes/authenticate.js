@@ -10,16 +10,21 @@ router.get('/login', authController.login_get);
 router.post('/login', authController.login_post);
 router.get('/logout', authController.logout_get);
 
-router.get('/google', passport.authenticate('google', {
-    scope: ['profile']
-}));
 
-router.get('/auth/google/redirect', passport.authenticate('google'), (req, res) => {
-    res.redirect('/profile/');
-});
+//Google Routes
+router.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-router.get('/google/logout', (req, res) => {
-    req.logOut();
+router.get('/auth/google/callback', 
+  passport.authenticate('google', {
+    successRedirect: '/home',
+    failureRedirect: '/login'
+  }));
+
+
+router.get('/auth/google/logout', (req, res) => {
+    req.session.destroy();
+    req.cookies.destroy();
     res.redirect('/');
 });
 
