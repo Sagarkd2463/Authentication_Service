@@ -16,7 +16,7 @@ passport.deserializeUser((id, cb) => {
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "http://localhost:5000/auth/github/callback"
+    callbackURL: 'http://localhost:5000/auth/github/callback',
 },
     function (accessToken, refreshToken, profile, done) {
         console.log(profile);
@@ -34,7 +34,7 @@ passport.use(new GitHubStrategy({
                     thumbnail: profile.photos.value,
                     origin: profile.provider
                 }).save().then((newGithubUser) => {
-                    console.log('New Google User created ', newGithubUser);
+                    console.log('New Github User created ', newGithubUser);
                     return done(null, newGithubUser);
                 });
             }
