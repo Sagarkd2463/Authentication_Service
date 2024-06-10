@@ -1,44 +1,58 @@
-<%- include('./partials/header') -%> 
+<!DOCTYPE html>
+<html lang="en">
 
-<form enctype="multipart/form-data">
-    <h2>Log In</h2>
-    <label for="email">Email</label>
-    <input type="email" name="email" required>
-    <div class="email error"></div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="login.css">
+</head>
 
-    <label for="password">Password</label>
-    <input type="password" name="password" required>
-    <div class="password error"></div>
+<body>
+    <form enctype="multipart/form-data">
+        <h2 class="login">Log In</h2>
+        <label for="email">Email</label>
+        <input type="email" name="email" required>
+        <div class="email error"></div>
 
-    <button>Log In</button>
+        <label for="password">Password</label>
+        <input type="password" name="password" required>
+        <div class="password error"></div>
 
-    <header>
-        <h3>Log in your account using</h3>
-    </header>
+        <button type="submit" class="submit-btn-login">Log In</button>
 
-    <main>
-        <button>
-            <a href="/auth/google" class="google-btn">Sign in with Google </a>
-        </button>
         <br>
-        <br>
-        <button>
-            <a href="/auth/facebook" class="facebook-btn">Sign in with Facebook</a>
-        </button>
-        <br>
-        <br>
-        <button>
-            <a href="/auth/github" class="github-btn">Sign in with Github </a>
-        </button>
-        <br>
-        <br>
-        <button>
-            <a href="/auth/linkedin" class="linkedin-btn">Sign in with LinkedIn</a>
-        </button>
-    </main>
-</form>
+        <hr>
+        <header>
+            <h3>Log in your account using</h3>
+        </header>
 
-<%- include('./partials/footer') -%>
+        <main>
+            <button>
+                <a href="/auth/google" class="google-btn"> <img src="" alt="Google" />
+                    Sign in with Google </a>
+            </button>
+            <br>
+            <button>
+                <a href="/auth/facebook" class="facebook-btn"> <img src="" alt="Facebook" />
+                    Sign in with Facebook</a>
+            </button>
+            <br>
+            <button>
+                <a href="/auth/github" class="github-btn"> <img src="" alt="Github" />
+                    Sign in with Github </a>
+            </button>
+            <br>
+            <button>
+                <a href="/auth/linkedin" class="linkedin-btn"> <img src="" alt="LinkedIn" />
+                    Sign in with LinkedIn</a>
+            </button>
+        </main>
+    </form>
+</body>
+
+</html>
+
 
 <script>
     const form = document.querySelector('form');
@@ -64,12 +78,12 @@
             });
 
             const data = await res.json();
-            if(data.error){
+            if (data.error) {
                 emailError.textContent = data.error.email;
                 passwordError.textContent = data.error.password;
             }
-            
-            if(data.user){
+
+            if (data.user) {
                 location.assign('/');
             }
 

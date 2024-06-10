@@ -1,22 +1,33 @@
-<%- include('./partials/header') -%> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <link rel="stylesheet" href="signup.css">
+</head>
+<body>
+    <form enctype="multipart/form-data">
+        <h2 class="signup">Sign Up</h2>
+        <label for="name">Name</label>
+        <input type="text" name="name" required>
+    
+        <label for="email">Email</label>
+        <input type="email" name="email" required>
+        <div class="email error"></div>
+    
+        <label for="password">Password</label>
+        <input type="password" name="password" required>
+        <div class="password error"></div>
+    
+        <button type="submit" class="submit-btn-signup">Sign Up</button>
+    </form>
+</body>
+</html>
 
-<form enctype="multipart/form-data">
-    <h2>Sign Up</h2>
-    <label for="name">Name</label>
-    <input type="text" name="name" required>
 
-    <label for="email">Email</label>
-    <input type="email" name="email" required>
-    <div class="email error"></div>
 
-    <label for="password">Password</label>
-    <input type="password" name="password" required>
-    <div class="password error"></div>
 
-    <button>Sign Up</button>
-</form>
-
-<%- include('./partials/footer') -%>
 
 <script>
     const form = document.querySelector('form');
