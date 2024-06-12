@@ -5,11 +5,13 @@ const FUser = require('../models/facebookUserModel');
 
 passport.serializeUser((user, cb) => {
     cb(null, user);
+    console.log(user);
 });
 
 passport.deserializeUser((id, cb) => {
     FUser.findById(id).then((user) => {
         cb(null, user);
+        console.log(user);
     })
 });
 

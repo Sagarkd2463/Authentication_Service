@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <style>
-    nav{
+    nav {
         background: lightslategray;
         padding: 20px;
         width: 100%;
@@ -17,6 +17,11 @@
         list-style: none;
         flex-direction: row-reverse;
         margin-top: 35px;
+    }
+
+    p {
+        text-align: center;
+        font-size: 22px;
     }
 
     ul li {
@@ -33,7 +38,7 @@
         padding-left: 35px;
         padding-top: 15px;
         padding-right: 35px;
-        padding-bottom: 15px; 
+        padding-bottom: 15px;
         margin: 25px 25px;
         color: black;
         border-radius: 5px;
@@ -41,11 +46,11 @@
         cursor: pointer;
     }
 
-    .login-btn:hover{
+    .login-btn:hover {
         background-color: white;
     }
 
-    .signup-btn{
+    .signup-btn {
         font-size: 22px;
         padding-left: 35px;
         padding-top: 15px;
@@ -58,11 +63,11 @@
         cursor: pointer;
     }
 
-    .signup-btn:hover{
+    .signup-btn:hover {
         background-color: white;
     }
 
-    .logout-btn{
+    .logout-btn {
         font-size: 22px;
         padding-left: 35px;
         padding-top: 15px;
@@ -81,13 +86,12 @@
     <nav>
         <ul>
             <% if(user) { %>
-                <li>Welcome, <%= user.email %>
-                </li>
+                <p>Welcome, <% user.email %></p>
                 <li><a class="logout-btn" href="/logout">Log out</a></li>
                 <% } else { %>
                     <li><a class="login-btn" href="/login">Log in</a></li>
                     <li><a class="signup-btn" href="/signup">Sign up</a></li>
-                    <% } %>
+                <% } %>
         </ul>
     </nav>
 

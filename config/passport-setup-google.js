@@ -5,11 +5,13 @@ const GUser = require('../models/googleUserModel');
 
 passport.serializeUser((user, cb) => {
     cb(null, user.id);
+    console.log(user);
 });
 
 passport.deserializeUser((id, cb) => {
     GUser.findById(id).then((user) => {
         cb(null, user);
+        console.log(user);
     });
 });
 
@@ -20,14 +22,14 @@ passport.use(
         callbackURL: 'http://localhost:5000/auth/google/callback',
         passReqToCallback: true
     },
-        function (accessToken, refreshtoken, profile, done) {
+        function (accessToken, refreshtoken, profile, cb) {
             console.log(profile);
-            done(null, profile);
+            cb(null, profile);
 
             GUser.findOne({ googleId: profile.id }).then((currentUser) => {
                 if (currentUser) {
                     console.log('User is ', currentUser);
-                    return done(null, currentUser);
+                    return cb(null, currentUser);
                 } else {
                     new GUser({
                         googleId: profile.id,
@@ -35,7 +37,7 @@ passport.use(
                         thumbnail: profile._json.image.url
                     }).save().then((newGoogleUser) => {
                         console.log('New Google User created ', newGoogleUser);
-                        return done(null, newGoogleUser);
+                        return cb(null, newGoogleUser);
                     });
                 }
             });

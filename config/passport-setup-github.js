@@ -5,11 +5,13 @@ const GitUser = require('../models/githubUserModel');
 
 passport.serializeUser((user, cb) => {
     cb(null, user.id);
+    console.log(user);
 });
 
 passport.deserializeUser((id, cb) => {
     GitUser.findById(id).then((user) => {
         cb(null, user);
+        console.log(user);
     });
 });
 

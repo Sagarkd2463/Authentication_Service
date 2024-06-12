@@ -8,9 +8,10 @@
 }
 
 form {
-    width: 400px;
+    width: 550px;
     margin: 0 auto;
     margin-top: 15px;
+    margin-bottom: 15px;
     padding: 30px;
     box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
     border-radius: 10px;
@@ -49,18 +50,22 @@ label {
     text-align: center;
 }
 
+hr{
+    margin-top: 10px;
+}
+
 header h3{
-    margin-top: 14px;
+    margin-top: 24px;
     text-align: center;
 }
 
-button {
+.bGoogle {
     margin-top: 30px;
     border-radius: 36px;
-    background: whitesmoke;
-    border: 0;
+    background: white;
+    border: 0px;
     text-transform: capitalize;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 0.8em;
     display: block;
     padding: 10px 16px;
@@ -68,29 +73,128 @@ button {
     text-align: center;
 }
 
-button a{
+.bGoogle a{
     text-decoration: none;
 }
 
-button img{
-    width: 50px;
-    height: 50px;
+.bFacebook{
+    margin-top: -70px;
+    margin-left: 220px;
+    border-radius: 36px;
+    background: white;
+    border: 0px;
+    text-transform: capitalize;
+    font-weight: 600;
+    font-size: 0.8em;
+    display: block;
+    padding: 10px 16px;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.bFacebook a{
+    text-decoration: none;
+}
+
+.bGithub{
+    margin-top: -25px;
+    border-radius: 36px;
+    background: white;
+    border: 0px;
+    text-transform: capitalize;
+    font-weight: 600;
+    font-size: 0.8em;
+    display: block;
+    padding: 10px 16px;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.bGithub a{
+    text-decoration: none;
+}
+
+.bLinkedin{
+    margin-top: -70px;
+    margin-left: 220px;
+    border-radius: 36px;
+    background: white;
+    border: 0px;
+    text-transform: capitalize;
+    font-weight: 600;
+    font-size: 0.8em;
+    display: block;
+    padding: 10px 16px;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.bLinkedin a{
+    text-decoration: none;
 }
 
 .google-btn{
     color: limegreen;
 }
 
+.google-btn img{
+    width: 15px;
+    height: 15px;
+    margin-left: -150px;
+    margin-right: 15px;
+    margin-bottom: -18px;
+}
+
+.google-btn .pGoogle{
+    margin-left: 20px;
+}
+
 .facebook-btn{
     color: blue;
+}
+
+.facebook-btn img{
+    width: 15px;
+    height: 15px;
+    margin-left: -175px;
+    margin-right: 10px;
+    margin-bottom: -18px;
+}
+
+.facebook-btn .pFacebook{
+    margin-left: 20px;
 }
 
 .github-btn{
     color: black;
 }
 
+.github-btn img{
+    width: 15px;
+    height: 15px;
+    margin-left: -135px;
+    margin-right: 25px;
+    margin-bottom: -18px;
+}
+
+.github-btn .pGithub{
+    margin-left: 20px;
+}
+
 .linkedin-btn{
     color: lightseagreen;
+}
+
+.linkedin-btn img{
+    width: 15px;
+    height: 15px;
+    margin-left: -175px;
+    margin-right: 5px;
+    margin-bottom: -18px;
+}
+
+.linkedin-btn .pLinkedin{
+    margin-left: 20px;
 }
 
 .error {

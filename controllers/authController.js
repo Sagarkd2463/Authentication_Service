@@ -44,6 +44,7 @@ module.exports.signup_post = async (req, res) => {
         const token = createToken(user._id);
         res.cookie('jwt', token, { httpOnly: true, session: session * 1000});
         res.status(201).json({ user });
+        console.log(req.body.bodyData);
     } catch (err) {
         const errors = handleErrors(err);
         res.status(400).json({ errors });
@@ -62,6 +63,7 @@ module.exports.login_post = async (req, res) => {
         const token = createToken(user._id);
         res.cookie('jwt', token, { httpOnly: true, session: session * 1000});
         res.status(200).json({ user });
+        console.log(req.body.bodyData);
     } catch (err) {
         const errors = handleErrors(err);
         res.status(400).json({ errors });

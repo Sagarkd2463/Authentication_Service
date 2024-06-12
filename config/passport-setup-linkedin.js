@@ -5,11 +5,13 @@ const LUser = require('../models/linkedinUserModel');
 
 passport.serializeUser((user, done) => {
     done(null, user);
+    console.log(user);
 });
 
 passport.deserializeUser((id, done) => {
     LUser.findById(id).then((user) => {
         done(null, user);
+        console.log(user);
     });
 });
 
