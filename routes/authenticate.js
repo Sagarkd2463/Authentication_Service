@@ -3,47 +3,76 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const authMiddleware = require('../middleware/auth');
+const { registeredUserValidate, loginUserValidate } = require('../middleware/validUser');
+const UserModel = require('../models/userModel');
 
 const router = express.Router();
 
-const users = [];
-
-router.post('/register', async (req, resp) => {
-    const { username, password } = req.body;
-    if (!username || !password) {
-        return resp.status(400).send({ message: 'Username and password is required!' })
-    }
-
-    const existingUser = users.find(user => user.username === username);
-    if (existingUser) {
-        return resp.status(400).send({ message: 'User is already registered!' })
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    users.push({ username: username, password: hashedPassword })
-    resp.status(201).send({ message: 'User registered successfully!' });
+router.get('/register', (req, res) => {
+    res.render('signup');
 });
 
-router.post('/login', async (req, resp) => {
-    const { username, password } = req.body;
-    if (!username || !password) {
-        return resp.status(400).send({ message: 'Username and password is required!' })
-    }
-    const existingUser = users.find(user => user.username === username);
-    if (!existingUser) {
-        return resp.status(400).send({ message: 'User is not registered!' })
-    }
-    const isValidPassword = await bcrypt.compare(password, existingUser.password);
-    if (!isValidPassword) {
-        return resp.status(400).send({ message: 'Password is invalid' })
-    }
-
-    const token = jwt.sign({ username: existingUser.username }, config.secret, { expiresIn: '1h' });
-    resp.send({ token });
+router.get('/login', (req, res) => {
+    res.render('login');
 });
 
-router.get('/test', authMiddleware, async (req, resp) => {
-    resp.send({ message: 'This api endpoint is protected by jwt' })
-})
+router.get('/users', authMiddleware, async (req, res) => {
+    try {
+        const allUsers = await UserModel.find({}, { password: 0 });
+        return res.status(200).json({ data: allUsers });
+    } catch (err) {
+        return res.status(500).json({ message: "failed", err });
+    }
+});
+
+router.post('/register', registeredUserValidate, async (req, res) => {
+    const { username, email, password } = req.body;
+    if (!username || !email || !password) {
+        return res.status(400).send({ message: 'Username, email and password is required!' });
+    }
+
+    const user = new UserModel(req.body);
+    user.password = await bcrypt.hash(password, 10);
+
+    try {
+        const data = await user.save();
+        data.password = undefined;
+        return res.status(201).json({ message: "success", response: data });
+    } catch (err) {
+        return res.status(500).json({ message: "failed", err });
+    }
+});
+
+router.post('/login', loginUserValidate, async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).send({ message: 'Email and password is required!' });
+    }
+
+    try {
+        const user = await UserModel.findOne({ email: email });
+
+        if (!user) {
+            return res.status(401).json({ message: "Auth failed, no user with this email is registered!" });
+        }
+
+        const checkPassword = await bcrypt.compare(password, user.password);
+
+        if (!checkPassword) {
+            return res.status(401).json({ message: "Password is incorrect, Please try again!" });
+        }
+
+        const tokenObj = {
+            _id: user._id,
+            username: user.username,
+            email: user.email
+        }
+
+        const token = jwt.sign(tokenObj, config.secret, { expiresIn: '4h' });
+        return res.status(200).json({ token, tokenObj });
+    } catch (err) {
+        return res.status(500).json({ message: "failed", err });
+    }
+});
 
 module.exports = router;

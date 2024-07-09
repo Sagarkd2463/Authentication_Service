@@ -37,14 +37,14 @@
         emailError.textContent = '';
         passwordError.textContent = '';
 
-        const name = form.name.value;
+        const username = form.name.value;
         const email = form.email.value;
         const password = form.password.value;
 
         try {
-            const res = await fetch('/signup', {
+            const res = await fetch('/register', {
                 method: 'POST',
-                body: JSON.stringify({ name, email, password }),
+                body: JSON.stringify({ username, email, password }),
                 headers: {
                     'Content-type': 'application/json',
                 },
