@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="signup.css">
 </head>
 
 <body>
-    <form enctype="application/x-www-form-urlencoded">
+    <form action="/login" method="post" enctype="application/x-www-form-urlencoded">
         <h2 class="login">Log In</h2>
         <label for="email">Email</label>
         <input type="email" name="email">
@@ -21,6 +22,10 @@
 
         <button type="submit" class="submit-btn-login">Log In</button>
 
+        <p>Don't have an account?</p>
+        <button>
+            <a href="/register" class="submit-btn-signup">Sign Up</a>
+        </button>
         <br>
         <hr>
         <header>
@@ -63,9 +68,6 @@
     </form>
 </body>
 
-</html>
-
-
 <script>
     const form = document.querySelector('form');
     const emailError = document.querySelector('.email.error');
@@ -107,3 +109,5 @@
         }
     });
 </script>
+
+</html>

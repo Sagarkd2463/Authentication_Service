@@ -7,6 +7,8 @@ require('dotenv').config();
 require('./database/db');
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: false}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
