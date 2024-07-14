@@ -37,8 +37,8 @@ app.use(session({
 }));
 
 passport.use(new GoogleStrategy({
-    clientID: "",
-    clientSecret: "",
+    clientID: "274907625225-pnsmk781m0hqlkagrr6qf7ae35pnv7ar.apps.googleusercontent.com",
+    clientSecret: "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",
     callbackURL: "http://localhost:5000/auth/google/callback"
 },
     function (accessToken, refreshToken, profile, done) {
@@ -48,8 +48,8 @@ passport.use(new GoogleStrategy({
 ));
 
 passport.use(new FacebookStrategy({
-    clientID: "",
-    clientSecret: "",
+    clientID: "453285177505178",
+    clientSecret: "c0f029cec353c95bc12817d6c534a503",
     callbackURL: "http://localhost:5000/auth/facebook/callback",
     profileFields: ['id', 'displayName', 'name', 'gender', 'email', 'picture.type(large)']
 },
