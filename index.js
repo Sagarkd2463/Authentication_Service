@@ -26,10 +26,9 @@ app.set('view engine', 'ejs');
 app.get('/', (req, res) => {
     res.render('home');
 });
+
 app.use('/', authRoutes);
 
-<<<<<<< HEAD
-=======
 app.use(session({
     secret: process.env.ESESSION,
     resave: false,
@@ -102,7 +101,6 @@ app.get('/auth/google/logout', (req, res) => {
     res.redirect('/');
 });
 
->>>>>>> 26451a5 (Added google and facebook login)
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
