@@ -8,13 +8,10 @@
 </head>
 
 <body>
-    <p>Succesfully Logged in</p>
-
-    <button class="">
-        <a href="http://localhost:5000/" class="">
-            <p class="">Logout</p>
-        </a>
-    </button>
-</body>
+    <% if (user) { %>
+        <p class="">Succesfully Logged by <%= user.displayName %>
+        </p>
+        <a href="http://localhost:5000/" class="">Logout</a>
+        <% } % </body>
 
 </html>

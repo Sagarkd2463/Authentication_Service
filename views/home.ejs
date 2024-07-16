@@ -4,27 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Home</title>
     <link rel="stylesheet" href="home.css">
 
 </head>
 
 <body>
-    <button>
-        <a class="signup-btn" href="/register">Sign up</a>
-    </button>
-
-    <button>
-        <a class="login-btn" href="/login">Log in</a>
-    </button>
-
-    <button>
-        <a class="logout-btn" href="/logout">Log out</a>
-    </button>
-
-    <p>
-        Welcome, {{naming}}
-    </p>
+    <nav>
+        <% if (user) { %>
+            <a class="logout-btn" href="/logout">Log out</a>
+            <% } else { %>
+                <a class="signup-btn" href="/register">Sign up</a>
+                <a class="login-btn" href="/login">Log in</a>
+                <% } %>
+    </nav>
 </body>
 
 </html>

@@ -8,7 +8,7 @@
 }
 
 form {
-    width: 400px;
+    width: 480px;
     margin: 0 auto;
     padding: 30px;
     margin-top: 55px;
@@ -36,7 +36,7 @@ label {
 
 .submit-btn-signup{
     margin-top: 30px;
-    border-radius: 36px;
+    border-radius: 20px;
     background: black;
     color: white;
     border: 0;
@@ -44,27 +44,41 @@ label {
     font-weight: 700;
     font-size: 0.8em;
     display: block;
-    padding: 10px 16px;
+    padding: 15px 16px;
     letter-spacing: 2px;
     text-align: center;
     cursor: pointer;
 }
 
-button {
-    margin-top: 30px;
-    border-radius: 36px;
-    background: whitesmoke;
+.submit-btn-signup:hover{
+    transition: 0.4ms ease-in;
+    transform: scale(1.02);
+}
+
+.account{
+    margin-top: 25px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.btn-login{
+    margin-top: 20px;
+    border-radius: 30px;
+    background-color: limegreen;
+    color: white;
     border: 0;
     text-transform: uppercase;
+    text-decoration: none;
     font-weight: 700;
-    font-size: 0.8em;
+    font-size: 0.9em;
     display: block;
-    padding: 10px 16px;
+    padding: 15px 16px;
     letter-spacing: 2px;
     text-align: center;
     cursor: pointer;
 }
 
-button a{
-    text-decoration: none;
+.btn-login:hover{
+    transition: 0.5ms ease-in-out;
+    transform: scale(1.01);
 }
