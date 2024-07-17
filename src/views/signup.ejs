@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+</head>
+
+<body>
+    <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
+        <h2 class="signup">Sign Up</h2>
+        <label for="name">Name</label>
+        <input type="text" name="name" required>
+
+        <label for="email">Email</label>
+        <input type="email" name="email" required>
+        <div class="email error"></div>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" required>
+        <div class="password error"></div>
+
+        <button type="submit" class="submit-btn-signup">Submit</button>
+
+        <p class="account">Already having an account? Then, </p>
+        <a href="/login" class="btn-login">Log In</a>
+    </form>
+</body>
+
+<script>
+    const form = document.querySelector('form');
+    const emailError = document.querySelector('.email.error');
+    const passwordError = document.querySelector('.password.error');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        emailError.textContent = '';
+        passwordError.textContent = '';
+
+        const username = form.name.value;
+        const email = form.email.value;
+        const password = form.password.value;
+
+        try {
+            const res = await fetch('/register', {
+                method: 'POST',
+                body: JSON.stringify({ username, email, password }),
+                headers: {
+                    'Content-type': 'application/json',
+                },
+            });
+
+            const data = await res.json();
+            if (data.error) {
+                emailError.textContent = data.error.email;
+                passwordError.textContent = data.error.password;
+            }
+
+            if (data.user) {
+                location.assign('/');
+            }
+
+        } catch (err) {
+            console.log(err);
+        }
+    });
+</script>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Quicksand', Georgia, 'Times New Roman', Times, serif;
+    }
+
+    form {
+        width: 480px;
+        margin: 0 auto;
+        padding: 30px;
+        margin-top: 55px;
+        box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        background: white;
+    }
+
+    .signup {
+        text-align: center;
+    }
+
+    input {
+        padding: 10px 12px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        font-size: 1em;
+        width: 100%;
+    }
+
+    label {
+        display: block;
+        margin: 20px 0 10px;
+    }
+
+    .submit-btn-signup {
+        margin-top: 30px;
+        border-radius: 20px;
+        background: black;
+        color: white;
+        border: 0;
+        text-transform: uppercase;
+        font-weight: 700;
+        font-size: 0.8em;
+        display: block;
+        padding: 15px 16px;
+        letter-spacing: 2px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .submit-btn-signup:hover {
+        transition: 0.4ms ease-in;
+        transform: scale(1.02);
+    }
+
+    .account {
+        margin-top: 25px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .btn-login {
+        margin-top: 20px;
+        border-radius: 30px;
+        background-color: limegreen;
+        color: white;
+        border: 0;
+        text-transform: uppercase;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.9em;
+        display: block;
+        padding: 15px 16px;
+        letter-spacing: 2px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .btn-login:hover {
+        transition: 0.5ms ease-in-out;
+        transform: scale(1.01);
+    }
+</style>
+
+</html>
