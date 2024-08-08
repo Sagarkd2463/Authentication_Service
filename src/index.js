@@ -1,5 +1,6 @@
 require('dotenv').config();
-// express files
+
+// Express files
 const express = require('express');
 const authRoutes = require('./routes/authenticate');
 const bodyParser = require('body-parser');
@@ -7,143 +8,159 @@ const path = require('path');
 const session = require('express-session');
 const cookieSession = require('cookie-session');
 
-// database fies
+// Database files
 require('./database/db');
 
-// passport files 
+// Passport files
 const passport = require('passport');
-const GoogleStrategy = require('./controllers/googlePassport');
-const FacebookStrategy = require('./controllers/facebookPassport');
-const GithubStrategy = require('./controllers/githubPassport');
-const LinkedinStrategy = require('./controllers/linkedinPassport');
+require('./controllers/googlePassport');
+require('./controllers/facebookPassport');
+require('./controllers/githubPassport');
+require('./controllers/linkedinPassport');
 const { applyDefaults } = require('./models/userModel');
 
 const app = express();
+
+// Middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, __dirname, 'public')));
 
+// Serve static files from the "public" directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Set EJS as the template engine
 app.set('view engine', 'ejs');
 
-app.use('/', authRoutes);
-
+// Session and cookie session configurations
 app.use(cookieSession({
     name: 'Authentication',
     secret: process.env.SESSION,
-    secure: true,
-    expires: 3 * 24 * 60 * 60,
+    secure: false,
+    maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days in milliseconds
 }));
 
 app.use(session({
     secret: process.env.ESESSION,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true }
+    cookie: { secure: false }
 }));
 
+// Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Routes
+app.use('/', authRoutes);
+
 app.get('/', (req, res) => {
-    res.render('home.ejs', { user: req.user });
+    res.render('home', { user: req.user });
 });
 
 app.get('/googleDashboard', (req, res) => {
-    res.render("views/googleDashboard.ejs", { name: req.user.displayName, email: req.user.emails[0].value, pic: req.user.photos[0].value });
+    res.render("googleDashboard", { name: req.user.displayName, email: req.user.emails[0].value, pic: req.user.photos[0].value });
 });
 
 app.get('/facebookDashboard', (req, res) => {
-    res.render('views/facebookDashboard.ejs', { name: req.user.displayName, email: req.user.emails[0].value, pic: req.user.photos[0].value });
+    res.render('facebookDashboard', { name: req.user.displayName, email: req.user.emails[0].value, pic: req.user.photos[0].value });
 });
 
 app.get('/githubDashboard', (req, res) => {
-    res.render('views/githubDashboard.ejs', { name: req.user.displayName, pic: req.user.photos[0].value });
+    res.render('githubDashboard', { name: req.user.displayName, pic: req.user.photos[0].value });
 });
 
 app.get('/linkedinDashboard', (req, res) => {
-    res.render('views/linkedinDashboard.ejs', { name: req.user.displayName });
+    res.render('linkedinDashboard', { name: req.user.displayName });
 });
 
+// Authentication routes with logging for debugging
 app.get('/auth/google',
-    passport.authenticate('google', { scope: 'email' }),
+    passport.authenticate('google', { scope: 'email' })
 );
 
 app.get('/auth/google/callback',
     passport.authenticate('google', {
         failureRedirect: '/login',
         failureMessage: 'Oops! Login failed, Please try again!!',
-        successRedirect: '/googleDashboard',
-        successMessage: 'Successfully Logged in!!!'
     }),
+    (req, res) => {
+        console.log('Successfully authenticated with Google');
+        res.redirect('/googleDashboard');
+    }
 );
 
 app.get('/auth/google/logout', (req, res) => {
-    req.session.destroy();
-    req.logout();
-    res.redirect('/');
+    req.session.destroy((err) => {
+        req.logout(() => res.redirect('/'));
+    });
 });
 
 app.get('/auth/facebook',
-    passport.authenticate('facebook', { scope: 'email' }),
+    passport.authenticate('facebook', { scope: 'email' })
 );
 
 app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {
         failureRedirect: '/login',
         failureMessage: 'Oops! Login failed, Please try again!!',
-        successRedirect: '/facebookDashboard',
-        successMessage: 'Successfully Logged in!!!'
     }),
+    (req, res) => {
+        console.log('Successfully authenticated with Facebook');
+        res.redirect('/facebookDashboard');
+    }
 );
 
 app.get('/auth/facebook/logout', (req, res) => {
-    req.session.destroy();
-    req.logout();
-    res.redirect('/');
+    req.session.destroy((err) => {
+        req.logout(() => res.redirect('/'));
+    });
 });
 
 app.get('/auth/github',
-    passport.authenticate('github', { scope: 'email' }),
+    passport.authenticate('github', { scope: 'email' })
 );
 
 app.get('/auth/github/callback',
     passport.authenticate('github', {
         failureRedirect: '/login',
         failureMessage: 'Oops! Login failed, Please try again!!',
-        successRedirect: '/githubDashboard',
-        successMessage: 'Successfully Logged in!!!'
     }),
+    (req, res) => {
+        console.log('Successfully authenticated with GitHub');
+        res.redirect('/githubDashboard');
+    }
 );
 
 app.get('/auth/github/logout', (req, res) => {
-    req.session.destroy();
-    req.logout();
-    res.redirect('/');
+    req.session.destroy((err) => {
+        req.logout(() => res.redirect('/'));
+    });
 });
 
 app.get('/auth/linkedin',
-    passport.authenticate('linkedin', { scope: 'email' }),
+    passport.authenticate('linkedin', { scope: 'email' })
 );
 
 app.get('/auth/linkedin/callback',
     passport.authenticate('linkedin', {
         failureRedirect: '/login',
         failureMessage: 'Oops! Login failed, Please try again!!',
-        successRedirect: '/linkedinDashboard',
-        successMessage: 'Successfully Logged in!!!'
     }),
+    (req, res) => {
+        console.log('Successfully authenticated with LinkedIn');
+        res.redirect('/linkedinDashboard');
+    }
 );
 
 app.get('/auth/linkedin/logout', (req, res) => {
-    req.session.destroy();
-    req.logout();
-    res.redirect('/');
+    req.session.destroy((err) => {
+        req.logout(() => res.redirect('/'));
+    });
 });
 
+// Start the server
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
     console.log(`Listening on server port: http://localhost:${PORT}`);
 });
-

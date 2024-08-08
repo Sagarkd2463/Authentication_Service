@@ -3,8 +3,8 @@ const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
 const FUser = require('../models/facebookModel');
 
-passport.serializeUser(function (facebookuser, done) {
-    done(null, facebookuser.id);
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
 });
 
 passport.deserializeUser(function (id, done) {
@@ -20,33 +20,31 @@ passport.use(new FacebookStrategy({
     profileFields: ['id', 'displayName', 'name', 'gender', 'email', 'picture.type(large)']
 },
     async function (accessToken, refreshToken, profile, done) {
-
         try {
-            const user = await FUser.findOne({ 'id': profile.id });
-
-            if (!user) return done(null, false);
+            let user = await FUser.findOne({ 'id': profile.id });
 
             if (user) {
-                console.log(" User Found ");
+                console.log("User Found:");
                 console.log(user);
                 return done(null, user);
             } else {
-                const newUser = new FUser();
-
-                newUser.id = profile.id;
-                newUser.displayName = profile.displayName;
-                newUser.gender = profile.gender;
-                newUser.email = profile.emails[0].value;
-                newUser.photo = profile.photos[0].value;
-                newUser.provider = profile.provider;
-
-                newUser.save(function (err) {
-                    if (err) throw err;
-
-                    return done(null, newUser);
+                // Create a new user if not found
+                const newUser = new FUser({
+                    id: profile.id,
+                    displayName: profile.displayName,
+                    gender: profile.gender,
+                    email: profile.emails && profile.emails[0] ? profile.emails[0].value : '',  // Check if email exists
+                    photo: profile.photos && profile.photos[0] ? profile.photos[0].value : '',  // Check if photo exists
+                    provider: profile.provider
                 });
+
+                await newUser.save();  // Save the new user to the database
+                console.log("New User Created:");
+                console.log(newUser);
+                return done(null, newUser);
             }
         } catch (err) {
+            console.error("Error during Facebook authentication:", err);
             return done(err, false);
         }
     }

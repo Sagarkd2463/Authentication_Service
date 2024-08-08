@@ -3,8 +3,8 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const GUser = require('../models/googleModel');
 
-passport.serializeUser(function (googleuser, done) {
-    done(null, googleuser.id);
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
 });
 
 passport.deserializeUser(function (id, done) {
@@ -20,29 +20,28 @@ passport.use(new GoogleStrategy({
 },
     async function (accessToken, refreshToken, profile, done) {
         try {
-            const user = await GUser.findOne({ 'id': profile.id });
-
-            if (!user) return done(null, false);
+            let user = await GUser.findOne({ 'id': profile.id });
 
             if (user) {
-                console.log(" User Found ");
+                console.log("User Found:");
                 console.log(user);
                 return done(null, user);
             } else {
-                const newUser = new GUser();
-
-                newUser.id = profile.id;
-                newUser.displayName = profile.displayName;
-                newUser.photo = profile.photos[0].value;
-                newUser.provider = profile.provider;
-
-                newUser.save(function (err) {
-                    if (err) throw err;
-
-                    return done(null, newUser);
+                // Create a new user if not found
+                const newUser = new GUser({
+                    id: profile.id,
+                    displayName: profile.displayName,
+                    photo: profile.photos && profile.photos[0] ? profile.photos[0].value : '',  // Check if photo exists
+                    provider: profile.provider
                 });
+
+                await newUser.save();  // Save the new user to the database
+                console.log("New User Created:");
+                console.log(newUser);
+                return done(null, newUser);
             }
         } catch (err) {
+            console.error("Error during Google authentication:", err);
             return done(err, false);
         }
     }
