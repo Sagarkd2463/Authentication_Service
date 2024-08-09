@@ -18,7 +18,13 @@ passport.use(new LinkedinStrategy({
     scope: ['r_emailaddress', 'r_liteprofile'],
     state: true,
 }, async function (accessToken, refreshToken, profile, done) {
-    done(null, profile);
+    try {
+        console.log('Profile:', profile);
+        done(null, profile);
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        done(error);
+    }
 }));
 
 module.exports = LinkedinStrategy;

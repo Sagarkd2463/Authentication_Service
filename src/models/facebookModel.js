@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const facebookSchema = new mongoose.Schema({
-    id: {
+    facebookId: {
         type: String,
     },
     displayName: {

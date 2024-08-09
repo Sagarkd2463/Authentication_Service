@@ -2,6 +2,7 @@ require('dotenv').config();
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const GUser = require('../models/googleModel');
+const { default: mongoose } = require('mongoose');
 
 passport.serializeUser(function (user, done) {
     done(null, user.id);
@@ -20,7 +21,7 @@ passport.use(new GoogleStrategy({
 },
     async function (accessToken, refreshToken, profile, done) {
         try {
-            let user = await GUser.findOne({ 'id': profile.id });
+            let user = await GUser.findOne({ googleId: profile.id.toString() });
 
             if (user) {
                 console.log("User Found:");
@@ -29,7 +30,8 @@ passport.use(new GoogleStrategy({
             } else {
                 // Create a new user if not found
                 const newUser = new GUser({
-                    id: profile.id,
+                    _id: new mongoose.Types.ObjectId(),
+                    googleId: profile.id,
                     displayName: profile.displayName,
                     photo: profile.photos && profile.photos[0] ? profile.photos[0].value : '',  // Check if photo exists
                     provider: profile.provider

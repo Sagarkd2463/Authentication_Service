@@ -2,6 +2,7 @@ require('dotenv').config();
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
 const FUser = require('../models/facebookModel');
+const { default: mongoose } = require('mongoose');
 
 passport.serializeUser(function (user, done) {
     done(null, user.id);
@@ -21,7 +22,7 @@ passport.use(new FacebookStrategy({
 },
     async function (accessToken, refreshToken, profile, done) {
         try {
-            let user = await FUser.findOne({ 'id': profile.id });
+            let user = await FUser.findOne({ facebookId: profile.id.toString() });
 
             if (user) {
                 console.log("User Found:");
@@ -30,7 +31,8 @@ passport.use(new FacebookStrategy({
             } else {
                 // Create a new user if not found
                 const newUser = new FUser({
-                    id: profile.id,
+                    _id: new mongoose.Types.ObjectId(),
+                    facebookId: profile.id,
                     displayName: profile.displayName,
                     gender: profile.gender,
                     email: profile.emails && profile.emails[0] ? profile.emails[0].value : '',  // Check if email exists

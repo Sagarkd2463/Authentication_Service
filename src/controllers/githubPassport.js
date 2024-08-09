@@ -2,6 +2,7 @@ require('dotenv').config();
 const passport = require('passport');
 const GithubStrategy = require('passport-github').Strategy;
 const GitUser = require('../models/githubModel');
+const { default: mongoose } = require('mongoose');
 
 passport.serializeUser(function (user, done) {
     done(null, user.id);
@@ -20,7 +21,7 @@ passport.use(new GithubStrategy({
 },
     async function (accessToken, refreshToken, profile, done) {
         try {
-            let user = await GitUser.findOne({ 'id': profile.id });
+            let user = await GitUser.findOne({ githubId: profile.id.toString() });
 
             if (user) {
                 console.log("User Found:");
@@ -29,7 +30,8 @@ passport.use(new GithubStrategy({
             } else {
                 // Create a new user if not found
                 const newUser = new GitUser({
-                    id: profile.id,
+                    _id: new mongoose.Types.ObjectId(),
+                    githubId: profile.id,
                     displayName: profile.displayName,
                     username: profile.username,
                     profileUrl: profile.profileUrl,

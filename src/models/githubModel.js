@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const githubSchema = new mongoose.Schema({
-    id: {
+    githubId: {
         type: String,
     },
     displayName: {

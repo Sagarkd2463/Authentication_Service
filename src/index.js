@@ -43,7 +43,7 @@ app.use(cookieSession({
 app.use(session({
     secret: process.env.ESESSION,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { secure: false }
 }));
 
