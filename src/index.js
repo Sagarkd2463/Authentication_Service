@@ -6,7 +6,7 @@ const authRoutes = require('./routes/authenticate');
 const bodyParser = require('body-parser');
 const path = require('path');
 const session = require('express-session');
-const cookieSession = require('cookie-session');
+// const cookieSession = require('cookie-session');
 
 // Database files
 require('./database/db');
@@ -32,16 +32,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Set EJS as the template engine
 app.set('view engine', 'ejs');
 
-// Session and cookie session configurations
-app.use(cookieSession({
-    name: 'Authentication',
-    secret: process.env.SESSION,
-    secure: false,
-    maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days in milliseconds
-}));
+// // Session and cookie session configurations
+// app.use(cookieSession({
+//     name: 'Authentication',
+//     secret: process.env.SESSION,
+//     secure: false,
+//     maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days in milliseconds
+// }));
 
 app.use(session({
-    secret: process.env.ESESSION,
+    secret: 'theninjaisawesomeiguess',
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false }
@@ -58,7 +58,14 @@ app.get('/', (req, res) => {
     res.render('home', { user: req.user });
 });
 
-app.get('/googleDashboard', (req, res) => {
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
+}
+
+app.get('/googleDashboard', ensureAuthenticated, (req, res) => {
     res.render("googleDashboard", { name: req.user.displayName, email: req.user.emails[0].value, pic: req.user.photos[0].value });
 });
 
@@ -74,7 +81,6 @@ app.get('/linkedinDashboard', (req, res) => {
     res.render('linkedinDashboard', { name: req.user.displayName });
 });
 
-// Authentication routes with logging for debugging
 app.get('/auth/google',
     passport.authenticate('google', { scope: 'email' })
 );
@@ -86,6 +92,7 @@ app.get('/auth/google/callback',
     }),
     (req, res) => {
         console.log('Successfully authenticated with Google');
+        console.log('User:', req.user);
         res.redirect('/googleDashboard');
     }
 );

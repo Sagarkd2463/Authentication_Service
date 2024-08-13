@@ -1,27 +1,32 @@
-require('dotenv').config();
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const GUser = require('../models/googleModel');
 const { default: mongoose } = require('mongoose');
 
+// Serialize user
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
-passport.deserializeUser(function (id, done) {
-    GUser.findById(id, function (err, user) {
-        done(err, user);
-    });
+// Deserialize user
+passport.deserializeUser(async function (id, done) {
+    try {
+        const user = await GUser.findById(id).exec(); // Use async/await with .exec()
+        done(null, user);
+    } catch (err) {
+        done(err, null);
+    }
 });
 
+// Google Strategy setup
 passport.use(new GoogleStrategy({
-    clientID: "274907625225-pnsmk781m0hqlkagrr6qf7ae35pnv7ar.apps.googleusercontent.com",
-    clientSecret: "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",
+    clientID: '274907625225-a23lf5odglso26055lfkermi9jb4o9cv.apps.googleusercontent.com',
+    clientSecret: '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',
     callbackURL: "http://localhost:5000/auth/google/callback"
 },
     async function (accessToken, refreshToken, profile, done) {
         try {
-            let user = await GUser.findOne({ googleId: profile.id.toString() });
+            let user = await GUser.findOne({ googleId: profile.id });
 
             if (user) {
                 console.log("User Found:");
