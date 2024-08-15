@@ -58,14 +58,7 @@ app.get('/', (req, res) => {
     res.render('home', { user: req.user });
 });
 
-function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect('/login');
-}
-
-app.get('/googleDashboard', ensureAuthenticated, (req, res) => {
+app.get('/googleDashboard', (req, res) => {
     res.render("googleDashboard", { name: req.user.displayName, email: req.user.emails[0].value, pic: req.user.photos[0].value });
 });
 

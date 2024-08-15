@@ -8,10 +8,13 @@ passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
-passport.deserializeUser(function (id, done) {
-    FUser.findById(id, function (err, user) {
-        done(err, user);
-    });
+passport.deserializeUser(async function (id, done) {
+    try {
+        const user = await FUser.findById(id);
+        done(user, null);
+    } catch (error) {
+        done(error, null);
+    }
 });
 
 passport.use(new FacebookStrategy({

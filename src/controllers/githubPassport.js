@@ -8,10 +8,13 @@ passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
-passport.deserializeUser(function (id, done) {
-    GitUser.findById(id, function (err, user) {
-        done(err, user);
-    });
+passport.deserializeUser(async function (id, done) {
+    try {
+        const user = await GitUser.findById(id);
+        done(user, null);
+    } catch (error) {
+        done(null, error);
+    }
 });
 
 passport.use(new GithubStrategy({
