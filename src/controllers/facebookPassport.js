@@ -18,8 +18,8 @@ passport.deserializeUser(async function (id, done) {
 });
 
 passport.use(new FacebookStrategy({
-    clientID: "453285177505178",
-    clientSecret: "c0f029cec353c95bc12817d6c534a503",
+    clientID: "",
+    clientSecret: "",
     callbackURL: "http://localhost:5000/auth/facebook/callback",
     profileFields: ['id', 'displayName', 'name', 'gender', 'email', 'picture.type(large)']
 },
