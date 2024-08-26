@@ -6,7 +6,6 @@ const authRoutes = require('./routes/authenticate');
 const bodyParser = require('body-parser');
 const path = require('path');
 const session = require('express-session');
-// const cookieSession = require('cookie-session');
 
 // Database files
 require('./database/db');
@@ -32,14 +31,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Set EJS as the template engine
 app.set('view engine', 'ejs');
 
-// // Session and cookie session configurations
-// app.use(cookieSession({
-//     name: 'Authentication',
-//     secret: process.env.SESSION,
-//     secure: false,
-//     maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days in milliseconds
-// }));
-
 app.use(session({
     secret: 'theninjaisawesomeiguess',
     resave: false,
@@ -58,20 +49,65 @@ app.get('/', (req, res) => {
     res.render('home', { user: req.user });
 });
 
-app.get('/googleDashboard', (req, res) => {
-    res.render("googleDashboard", { name: req.user.displayName, email: req.user.emails[0].value, pic: req.user.photos[0].value });
+app.get('/success/google', (req, res) => {
+    if (!req.user) {
+        return res.redirect('/auth/google');
+    }
+
+    try {
+        res.render("profilegoogle", {
+            name: req.user.displayName,
+            email: req.user.emails?.[0]?.value,
+            pic: req.user.photos?.[0]?.value
+        });
+    } catch (error) {
+        res.status(500).send('Internal Server Error');
+    }
 });
 
-app.get('/facebookDashboard', (req, res) => {
-    res.render('facebookDashboard', { name: req.user.displayName, email: req.user.emails[0].value, pic: req.user.photos[0].value });
+app.get('/success/facebook', (req, res) => {
+    if (!req.user) {
+        return res.redirect('/auth/facebook');
+    }
+
+    try {
+        res.render('profilefacebook', {
+            name: req.user.displayName,
+            email: req.user.emails?.[0]?.value,
+            pic: req.user.photos?.[0]?.value
+        });
+    } catch (error) {
+        res.status(500).send('Internal Server Error');
+    }
 });
 
-app.get('/githubDashboard', (req, res) => {
-    res.render('githubDashboard', { name: req.user.displayName, pic: req.user.photos[0].value });
+app.get('/success/github', (req, res) => {
+    if (!req.user) {
+        return res.redirect('/auth/github');
+    }
+
+    try {
+        res.render('profilegithub', {
+            name: req.user.displayName,
+            pic: req.user.photos?.[0]?.value
+        });
+    } catch (error) {
+        res.status(500).send('Internal Server Error');
+    }
 });
 
-app.get('/linkedinDashboard', (req, res) => {
-    res.render('linkedinDashboard', { name: req.user.displayName });
+app.get('/success/linkedin', (req, res) => {
+    if (!req.user) {
+        return res.redirect('/auth/linkedin');
+    }
+
+    try {
+        res.render('profilelinkedin', {
+            name: req.user.displayName
+        });
+    } catch (error) {
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 app.get('/auth/google',
@@ -85,14 +121,23 @@ app.get('/auth/google/callback',
     }),
     (req, res) => {
         console.log('Successfully authenticated with Google');
-        console.log('User:', req.user);
-        res.redirect('/googleDashboard');
+        res.redirect('/success/google');
     }
 );
 
 app.get('/auth/google/logout', (req, res) => {
-    req.session.destroy((err) => {
-        req.logout(() => res.redirect('/'));
+    req.logout((err) => {
+        if (err) {
+            console.error("Error during logout:", err);
+            return res.status(500).send('Internal Server Error');
+        }
+        req.session.destroy((err) => {
+            if (err) {
+                console.error("Error during session destruction:", err);
+                return res.status(500).send('Internal Server Error');
+            }
+            res.redirect('/');
+        });
     });
 });
 
@@ -107,7 +152,7 @@ app.get('/auth/facebook/callback',
     }),
     (req, res) => {
         console.log('Successfully authenticated with Facebook');
-        res.redirect('/facebookDashboard');
+        res.redirect('/success/facebook');
     }
 );
 
@@ -128,7 +173,7 @@ app.get('/auth/github/callback',
     }),
     (req, res) => {
         console.log('Successfully authenticated with GitHub');
-        res.redirect('/githubDashboard');
+        res.redirect('/success/github');
     }
 );
 
@@ -149,7 +194,7 @@ app.get('/auth/linkedin/callback',
     }),
     (req, res) => {
         console.log('Successfully authenticated with LinkedIn');
-        res.redirect('/linkedinDashboard');
+        res.redirect('/success/linkedin');
     }
 );
 

@@ -18,8 +18,8 @@ passport.deserializeUser(async function (id, done) {
 });
 
 passport.use(new GithubStrategy({
-    clientID: "",
-    clientSecret: "",
+    clientID: "Ov23liw7G9MiknQ9yizk",
+    clientSecret: "05625aefd470d70429ad6fbe55a0e81bde01b67f",
     callbackURL: "http://localhost:5000/auth/github/callback"
 },
     async function (accessToken, refreshToken, profile, done) {
@@ -27,8 +27,7 @@ passport.use(new GithubStrategy({
             let user = await GitUser.findOne({ githubId: profile.id.toString() });
 
             if (user) {
-                console.log("User Found:");
-                console.log(user);
+                console.log("User Found:", user);
                 return done(null, user);
             } else {
                 // Create a new user if not found
@@ -43,8 +42,7 @@ passport.use(new GithubStrategy({
                 });
 
                 await newUser.save();  // Save the new user to the database
-                console.log("New User Created:");
-                console.log(newUser);
+                console.log("New User Created");
                 return done(null, newUser);
             }
         } catch (err) {

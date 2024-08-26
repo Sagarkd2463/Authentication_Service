@@ -12,8 +12,8 @@ passport.deserializeUser(async function (id, done) {
 });
 
 passport.use(new LinkedinStrategy({
-    clientID: "",
-    clientSecret: "",
+    clientID: "77te6ypqa2xqsw",
+    clientSecret: "WPL_AP1.98ElCmbdVHQD8ELb.PF/oUQ==",
     callbackURL: "http://localhost:5000/auth/linkedin/callback",
     scope: ['r_emailaddress', 'r_liteprofile'],
     state: true,

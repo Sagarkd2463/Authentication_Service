@@ -12,7 +12,7 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(async function (id, done) {
     try {
         const user = await GUser.findById(id);
-        done(user, null);
+        done(null, user);
     } catch (err) {
         done(err, null);
     }
@@ -20,8 +20,8 @@ passport.deserializeUser(async function (id, done) {
 
 // Google Strategy setup
 passport.use(new GoogleStrategy({
-    clientID: "",
-    clientSecret: "",
+    clientID: "274907625225-fpnalasfn49gbmbkadnohfv73e0huk2c.apps.googleusercontent.com",
+    clientSecret: "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",
     callbackURL: "http://localhost:5000/auth/google/callback"
 },
     async function (accessToken, refreshToken, profile, done) {
@@ -29,8 +29,7 @@ passport.use(new GoogleStrategy({
             let user = await GUser.findOne({ googleId: profile.id });
 
             if (user) {
-                console.log("User Found:");
-                console.log(user);
+                console.log("User Found:", user);
                 return done(null, user);
             } else {
                 // Create a new user if not found
@@ -43,8 +42,7 @@ passport.use(new GoogleStrategy({
                 });
 
                 await newUser.save();  // Save the new user to the database
-                console.log("New User Created:");
-                console.log(newUser);
+                console.log("New User Created");
                 return done(null, newUser);
             }
         } catch (err) {

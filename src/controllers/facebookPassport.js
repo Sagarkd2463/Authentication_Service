@@ -18,8 +18,8 @@ passport.deserializeUser(async function (id, done) {
 });
 
 passport.use(new FacebookStrategy({
-    clientID: "",
-    clientSecret: "",
+    clientID: "1191046355222818",
+    clientSecret: "d384925ddf2238d851140fdd39a6bca5",
     callbackURL: "http://localhost:5000/auth/facebook/callback",
     profileFields: ['id', 'displayName', 'name', 'gender', 'email', 'picture.type(large)']
 },
@@ -28,8 +28,7 @@ passport.use(new FacebookStrategy({
             let user = await FUser.findOne({ facebookId: profile.id.toString() });
 
             if (user) {
-                console.log("User Found:");
-                console.log(user);
+                console.log("User Found:", user);
                 return done(null, user);
             } else {
                 // Create a new user if not found
@@ -44,8 +43,7 @@ passport.use(new FacebookStrategy({
                 });
 
                 await newUser.save();  // Save the new user to the database
-                console.log("New User Created:");
-                console.log(newUser);
+                console.log("New User Created");
                 return done(null, newUser);
             }
         } catch (err) {
