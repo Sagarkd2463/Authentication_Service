@@ -7,6 +7,20 @@
     <title>Linkedin Dashboard</title>
 </head>
 
+<style>
+    .logout-btn {
+        background-color: black;
+        color: white;
+        padding: 15px 25px 15px 25px;
+        border-radius: 8px;
+        margin-right: 20px;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        font-size: 17px;
+    }
+</style>
+
 <body>
     <p>Successfully Logged In</p>
     <p>
@@ -19,7 +33,7 @@
                         <p>No picture available</p>
                         <% } %>
     </p>
-    <a href="/auth/google/logout">Logout</a>
+    <a class="logout-btn" href="/auth/google/logout">Logout</a>
 </body>
 
 </html>

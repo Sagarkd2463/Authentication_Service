@@ -6,5 +6,5 @@ mongoose.connect(url)
         console.log("Mongo DB Connected Successfully!!!");
     })
     .catch((err) => {
-        console.log("No DB Connected", err);
+        console.log("No DB Connected");
     });
