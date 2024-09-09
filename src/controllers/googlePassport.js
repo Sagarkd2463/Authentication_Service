@@ -29,7 +29,7 @@ passport.use(new GoogleStrategy({
             let user = await GUser.findOne({ googleId: profile.id });
 
             if (user) {
-                console.log("User Found:", user);
+                console.log("User Already Found...");
                 return done(null, user);
             } else {
                 // Create a new user if not found

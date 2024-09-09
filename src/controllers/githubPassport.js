@@ -27,7 +27,7 @@ passport.use(new GithubStrategy({
             let user = await GitUser.findOne({ githubId: profile.id.toString() });
 
             if (user) {
-                console.log("User Found:", user);
+                console.log("User Already Found...");
                 return done(null, user);
             } else {
                 // Create a new user if not found

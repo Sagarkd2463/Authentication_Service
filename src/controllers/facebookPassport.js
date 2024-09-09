@@ -28,7 +28,7 @@ passport.use(new FacebookStrategy({
             let user = await FUser.findOne({ facebookId: profile.id.toString() });
 
             if (user) {
-                console.log("User Found:", user);
+                console.log("User Already Found...");
                 return done(null, user);
             } else {
                 // Create a new user if not found
