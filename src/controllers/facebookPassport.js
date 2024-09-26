@@ -4,10 +4,12 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 const FUser = require('../models/facebookModel');
 const { default: mongoose } = require('mongoose');
 
+// Serialize user
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
+// Deserialize user
 passport.deserializeUser(async function (id, done) {
     try {
         const user = await FUser.findById(id);
@@ -17,9 +19,10 @@ passport.deserializeUser(async function (id, done) {
     }
 });
 
+// Facebook Strategy setup
 passport.use(new FacebookStrategy({
-    clientID: "1191046355222818",
-    clientSecret: "d384925ddf2238d851140fdd39a6bca5",
+    clientID: process.env.FACEBOOK_CLIENT_ID,
+    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
     callbackURL: "http://localhost:5000/auth/facebook/callback",
     profileFields: ['id', 'displayName', 'name', 'gender', 'email', 'picture.type(large)']
 },

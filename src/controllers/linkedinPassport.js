@@ -2,18 +2,20 @@ require('dotenv').config();
 const passport = require('passport');
 const LinkedinStrategy = require('passport-linkedin-oauth2').Strategy;
 
-
+// Serialize user
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
+// Deserialize user
 passport.deserializeUser(async function (id, done) {
     done(null, id);
 });
 
+// Linkedin Strategy setup
 passport.use(new LinkedinStrategy({
-    clientID: "77te6ypqa2xqsw",
-    clientSecret: "WPL_AP1.98ElCmbdVHQD8ELb.PF/oUQ==",
+    clientID: process.env.LINKEDIN_CLIENT_ID,
+    clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
     callbackURL: "http://localhost:5000/auth/linkedin/callback",
     scope: ['r_emailaddress', 'r_liteprofile'],
     state: true,

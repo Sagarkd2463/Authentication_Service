@@ -4,10 +4,12 @@ const GithubStrategy = require('passport-github').Strategy;
 const GitUser = require('../models/githubModel');
 const { default: mongoose } = require('mongoose');
 
+// Serialize user
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
+// Deserialize user
 passport.deserializeUser(async function (id, done) {
     try {
         const user = await GitUser.findById(id);
@@ -17,9 +19,10 @@ passport.deserializeUser(async function (id, done) {
     }
 });
 
+// Github Strategy setup
 passport.use(new GithubStrategy({
-    clientID: "Ov23liw7G9MiknQ9yizk",
-    clientSecret: "05625aefd470d70429ad6fbe55a0e81bde01b67f",
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
     callbackURL: "http://localhost:5000/auth/github/callback"
 },
     async function (accessToken, refreshToken, profile, done) {

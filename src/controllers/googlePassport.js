@@ -1,3 +1,4 @@
+require('dotenv').config();
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const GUser = require('../models/googleModel');
@@ -20,8 +21,8 @@ passport.deserializeUser(async function (id, done) {
 
 // Google Strategy setup
 passport.use(new GoogleStrategy({
-    clientID: "274907625225-fpnalasfn49gbmbkadnohfv73e0huk2c.apps.googleusercontent.com",
-    clientSecret: "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",
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: "http://localhost:5000/auth/google/callback"
 },
     async function (accessToken, refreshToken, profile, done) {
