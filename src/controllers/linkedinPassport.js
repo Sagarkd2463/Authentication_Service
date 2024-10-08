@@ -18,7 +18,6 @@ passport.use(new LinkedinStrategy({
     clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
     callbackURL: "http://localhost:5000/auth/linkedin/callback",
     scope: ['r_emailaddress', 'r_liteprofile'],
-    state: true,
 }, async function (accessToken, refreshToken, profile, done) {
     try {
         console.log('Profile:', profile);
