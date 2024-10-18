@@ -2,6 +2,30 @@ const express = require('express');
 
 const app = express.Router();
 
+app.get('/success/register', (req, res) => {
+    if (!req.user) {
+        return res.redirect('/register');
+    }
+
+    try {
+        res.render("home");
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+app.get('/success/login', (req, res) => {
+    if (!req.user) {
+        return res.redirect('/login');
+    }
+
+    try {
+        res.render("home");
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
 app.get('/success/google', (req, res) => {
     if (!req.user) {
         return res.redirect('/auth/google');

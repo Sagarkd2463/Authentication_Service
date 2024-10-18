@@ -36,7 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 
 app.use(session({
-    secret: 'theninjaisawesomeiguess',
+    secret: process.env.SESSION,
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false }

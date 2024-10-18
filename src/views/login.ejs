@@ -80,27 +80,38 @@
         try {
             const res = await fetch('/login', {
                 method: 'POST',
-                mode: "cors",
-                cache: "no-cache",
-                credentials: "same-origin",
-                body: JSON.stringify({ email, password }),
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
                 headers: {
-                    'Content-type': 'application/json',
+                    'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({ email, password }),
             });
 
-            const data = await res.json();
-            if (data.error) {
-                emailError.textContent = data.error.email;
-                passwordError.textContent = data.error.password;
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
             }
 
+            const data = await res.json();
+
+            // Handle server-side validation errors
+            if (data.error) {
+                if (data.error.email) {
+                    emailError.textContent = data.error.email;
+                }
+                if (data.error.password) {
+                    passwordError.textContent = data.error.password;
+                }
+            }
+
+            // If user is logged in successfully, redirect
             if (data.user) {
                 location.assign('/');
             }
 
         } catch (err) {
-            console.log(err);
+            console.error('Error during form submission:', err);
         }
     });
 </script>

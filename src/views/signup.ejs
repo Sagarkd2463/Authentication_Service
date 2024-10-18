@@ -39,7 +39,7 @@
         emailError.textContent = '';
         passwordError.textContent = '';
 
-        const username = form.name.value;
+        const username = form.username.value;
         const email = form.email.value;
         const password = form.password.value;
 
@@ -48,22 +48,33 @@
                 method: 'POST',
                 body: JSON.stringify({ username, email, password }),
                 headers: {
-                    'Content-type': 'application/json',
+                    'Content-Type': 'application/json',
                 },
             });
 
-            const data = await res.json();
-            if (data.error) {
-                emailError.textContent = data.error.email;
-                passwordError.textContent = data.error.password;
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
             }
 
+            const data = await res.json();
+
+            // Handle validation errors (if any)
+            if (data.error) {
+                if (data.error.email) {
+                    emailError.textContent = data.error.email;
+                }
+                if (data.error.password) {
+                    passwordError.textContent = data.error.password;
+                }
+            }
+
+            // If registration is successful, redirect to homepage
             if (data.user) {
                 location.assign('/');
             }
 
         } catch (err) {
-            console.log(err);
+            console.error('Error during form submission:', err);
         }
     });
 </script>
