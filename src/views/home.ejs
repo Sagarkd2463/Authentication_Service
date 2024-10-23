@@ -64,34 +64,12 @@
         color: white;
         transform: scale(1.1);
     }
-
-    .logout-btn {
-        background-color: white;
-        color: black;
-        padding: 15px 25px 15px 25px;
-        border-radius: 8px;
-        margin-right: 20px;
-        text-decoration: none;
-        text-align: center;
-        cursor: pointer;
-        font-size: 17px;
-    }
-
-    .logout-btn:hover {
-        background-color: lightskyblue;
-        color: white;
-        transform: scale(1.1);
-    }
 </style>
 
 <body>
     <nav>
-        <% if (user) { %>
-            <a class="logout-btn" href="/logout">Log out</a>
-            <% } else { %>
-                <a class="signup-btn" href="/register">Sign up</a>
-                <a class="login-btn" href="/login">Log in</a>
-                <% } %>
+        <a class="signup-btn" href="/register">Sign up</a>
+        <a class="login-btn" href="/login">Log in</a>
     </nav>
 </body>
 

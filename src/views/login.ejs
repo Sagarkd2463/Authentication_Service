@@ -8,15 +8,13 @@
 </head>
 
 <body>
-    <form action="/login" method="post" enctype="application/x-www-form-urlencoded">
+    <form method="post">
         <h2 class="login">Log In</h2>
         <label for="email">Email</label>
         <input type="email" name="email">
-        <div class="email error"></div>
 
         <label for="password">Password</label>
         <input type="password" name="password">
-        <div class="password error"></div>
 
         <button type="submit" class="submit-btn-login">Log In</button>
 
@@ -62,59 +60,6 @@
         </button>
     </main>
 </body>
-
-<script>
-    const form = document.querySelector('form');
-    const emailError = document.querySelector('.email.error');
-    const passwordError = document.querySelector('.password.error');
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        emailError.textContent = '';
-        passwordError.textContent = '';
-
-        const email = form.email.value;
-        const password = form.password.value;
-
-        try {
-            const res = await fetch('/login', {
-                method: 'POST',
-                mode: 'cors',
-                cache: 'no-cache',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`);
-            }
-
-            const data = await res.json();
-
-            // Handle server-side validation errors
-            if (data.error) {
-                if (data.error.email) {
-                    emailError.textContent = data.error.email;
-                }
-                if (data.error.password) {
-                    passwordError.textContent = data.error.password;
-                }
-            }
-
-            // If user is logged in successfully, redirect
-            if (data.user) {
-                location.assign('/');
-            }
-
-        } catch (err) {
-            console.error('Error during form submission:', err);
-        }
-    });
-</script>
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
@@ -387,13 +332,6 @@
         margin-top: -10px;
         font-size: 18px;
         font-weight: 500;
-    }
-
-    .error {
-        color: #ff0099;
-        margin: 10px 2px;
-        font-size: 0.8em;
-        font-weight: bold;
     }
 </style>
 

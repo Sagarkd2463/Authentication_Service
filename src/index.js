@@ -1,19 +1,21 @@
+// Other requires
 require('dotenv').config();
-
-// Express files
 const express = require('express');
 const bodyParser = require('body-parser');
-const path = require('path');
 const session = require('express-session');
+const ejs = require('ejs');
+const bcrypt = require('bcryptjs');
 
 // Routes files
-const authRoutes = require('./routes/authenticate');
 const successRoutes = require('./routes/success');
 const passportRoutes = require('./routes/passportRoutes');
 
 // Database files
 require('./database/db');
-require('./models/userModel');
+const User = require('./models/userModel');
+
+//middleware files
+const { registeredUserValidate, loginUserValidate } = require('./middleware/validUser');
 
 // Passport files
 const passport = require('passport');
@@ -22,15 +24,13 @@ require('./controllers/facebookPassport');
 require('./controllers/githubPassport');
 require('./controllers/linkedinPassport');
 
+// Express setup
 const app = express();
 
 // Middleware setup
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-// Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Set EJS as the template engine
 app.set('view engine', 'ejs');
@@ -48,10 +48,48 @@ app.use(passport.session());
 
 // Routes
 app.get('/', (req, res) => {
-    res.render('home', { user: req.user });
+    res.render('home');
 });
 
-app.use('/', authRoutes);
+app.get('/register', (req, res) => {
+    res.render('register');
+});
+
+app.get('/login', (req, res) => {
+    res.render('login');
+});
+
+app.post('/register', registeredUserValidate, async (req, res) => {
+
+    const user = await User.findOne({ username: req.body.username });
+
+    if (user) return res.status(400).json({
+        success: true,
+        message: "User already exists!!",
+        data: user,
+    });
+
+    const salt = bcrypt.genSaltSync(10);
+
+    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+
+    const newUser = await User.create({
+        username: req.body.username,
+        email: req.body.email,
+        password: hashedPassword,
+    });
+
+    res.status(201).json({
+        success: true,
+        message: "New user created successfully!!!",
+        data: newUser,
+    });
+});
+
+app.post('/login', loginUserValidate, async (req, res) => {
+
+});
+
 app.use('/', successRoutes);
 app.use('/', passportRoutes);
 
