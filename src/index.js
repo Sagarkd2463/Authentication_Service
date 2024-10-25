@@ -1,97 +1,127 @@
-// Other requires
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const ejs = require('ejs');
 const bcrypt = require('bcryptjs');
-
-// Routes files
-const successRoutes = require('./routes/success');
-const passportRoutes = require('./routes/passportRoutes');
-
-// Database files
-require('./database/db');
-const User = require('./models/userModel');
-
-//middleware files
-const { registeredUserValidate, loginUserValidate } = require('./middleware/validUser');
-
-// Passport files
 const passport = require('passport');
+const flash = require('connect-flash');
+
+// Initialize the app
+const app = express();
+
+// Database connection
+require('./database/db'); // Ensure database connection loads before using models
+
+// Import User model and Passport configurations
+const User = require('./models/userModel');
+const { initializingPassport, isAuthenticated } = require('./controllers/userPassport');
+
+// Initialize Passport strategies
+initializingPassport(passport);
 require('./controllers/googlePassport');
 require('./controllers/facebookPassport');
 require('./controllers/githubPassport');
 require('./controllers/linkedinPassport');
 
-// Express setup
-const app = express();
+// Configure EJS as the template engine
+app.set('view engine', 'ejs');
 
-// Middleware setup
+// Set up middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Set EJS as the template engine
-app.set('view engine', 'ejs');
-
+// Configure session middleware BEFORE initializing passport
 app.use(session({
-    secret: process.env.SESSION,
+    secret: process.env.SESSION || 'yourSecretKey', // Provide a fallback if SESSION is undefined
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false }
+    cookie: { secure: false } // Use secure: true in production with HTTPS
 }));
 
-// Initialize Passport
+// Configure flash middleware after session and before passport
+app.use(flash());
+
+app.use((req, res, next) => {
+    res.locals.messages = req.flash();
+    next();
+});
+
+// Initialize Passport and session handling
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Routes
-app.get('/', (req, res) => {
+// Import routes
+const successRoutes = require('./routes/success');
+const passportRoutes = require('./routes/passportRoutes');
+const { registeredUserValidate, loginUserValidate } = require('./middleware/validUser');
+
+// Routes for pages
+app.get("/", (req, res) => {
     res.render('home');
 });
 
-app.get('/register', (req, res) => {
+app.get("/register", (req, res) => {
     res.render('register');
 });
 
-app.get('/login', (req, res) => {
+app.get("/login", (req, res) => {
     res.render('login');
 });
 
-app.post('/register', registeredUserValidate, async (req, res) => {
+// Profile route, protected by authentication middleware
+app.get('/profile', isAuthenticated, (req, res) => {
+    res.render('profileUser', { name: req.user.name, email: req.user.email });
+});
 
-    const user = await User.findOne({ username: req.body.username });
+// Registration route
+app.post("/register", registeredUserValidate, async (req, res) => {
+    const { name, email, password } = req.body;
 
-    if (user) return res.status(400).json({
-        success: true,
-        message: "User already exists!!",
-        data: user,
-    });
+    try {
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
 
-    const salt = bcrypt.genSaltSync(10);
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+        // Create a new user
+        const newUser = new User({
+            name,
+            email,
+            password: hashedPassword
+        });
 
-    const newUser = await User.create({
-        username: req.body.username,
-        email: req.body.email,
-        password: hashedPassword,
-    });
+        await newUser.save();
+        res.status(201).redirect("/login");
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
-    res.status(201).json({
-        success: true,
-        message: "New user created successfully!!!",
-        data: newUser,
+// Login route with passport authentication
+app.post("/login", passport.authenticate('local', {
+    successRedirect: "/profile",
+    successFlash: true,
+    failureRedirect: "/register",
+    failureFlash: true
+}), loginUserValidate);
+
+// Logout route
+app.get("/logout", (req, res, next) => {
+    req.logout((err) => {
+        if (err) return next(err);
+        res.redirect("/");
     });
 });
 
-app.post('/login', loginUserValidate, async (req, res) => {
-
-});
-
-app.use('/', successRoutes);
-app.use('/', passportRoutes);
+// Additional routes
+app.use("/", successRoutes);
+app.use("/", passportRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

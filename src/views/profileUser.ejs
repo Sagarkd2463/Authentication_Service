@@ -8,27 +8,38 @@
 </head>
 <style>
     .logout-btn {
-        background-color: white;
-        color: black;
+        background-color: black;
+        color: white;
         padding: 15px 25px 15px 25px;
         border-radius: 8px;
         margin-right: 20px;
         text-decoration: none;
         text-align: center;
         cursor: pointer;
-        font-size: 17px;
+        font-size: 18px;
+        margin-top: 15px;
     }
 
     .logout-btn:hover {
-        background-color: lightskyblue;
-        color: white;
         transform: scale(1.1);
     }
 </style>
 
-<body>
-    <p style="color: green;">Successfully Logged In</p>
-    <a class="logout-btn" href="/">Log out</a>
+<body style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+    <h1 style="color: green;">Successfully Logged In</h1>
+    <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+        <strong style="font-size: 24px; margin-bottom: 8px;">Name - </strong>
+        <p style="font-size: 20px; text-decoration: none; margin-top: 5px; margin-bottom: 16px;">
+            <%= name %>
+        </p>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; line-height: 2;">
+        <strong style="font-size: 24px; margin-bottom: 10px;">Email - </strong>
+        <p style="font-size: 20px; text-decoration: none; margin-top: 5px; margin-bottom: 16px;">
+            <%= email %>
+        </p>
+    </div>
+    <a class="logout-btn" href="/logout">Log out</a>
 </body>
 
 </html>

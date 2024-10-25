@@ -4,7 +4,7 @@ const registeredUserValidate = (req, res, next) => {
     const schema = Joi.object({
         username: Joi.string().min(5).max(50).required(),
         email: Joi.string().email().required(),
-        password: Joi.string().min(4).alphanum().required()
+        password: Joi.string().min(4).max(20).alphanum().required()
     });
 
     const { error, value } = schema.validate(req.body);
