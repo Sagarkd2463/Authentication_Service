@@ -55,7 +55,8 @@ app.use(passport.session());
 // Import routes
 const successRoutes = require('./routes/success');
 const passportRoutes = require('./routes/passportRoutes');
-const { registeredUserValidate, loginUserValidate } = require('./middleware/validUser');
+const { registeredUserValidate, loginUserValidate, hmacProcess, acceptCodeValidate } = require('./middleware/validUser');
+const transport = require('./middleware/sendMail');
 
 // Routes for pages
 app.get("/", (req, res) => {
@@ -118,6 +119,96 @@ app.get("/logout", (req, res, next) => {
         res.redirect("/");
     });
 });
+
+const sendVerificationCode = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const existingUser = await User.findOne({ email });
+        if (!existingUser) {
+            return res.status(404).json({ message: 'User does not exists' });
+        }
+
+        const codeValue = Math.floor(Math.random() * 1000000).toString();
+        let info = await transport.sendMail({
+            from: process.env.NODE_CODE_SENDING_EMAIL_ADDRESS,
+            to: existingUser.email,
+            subject: 'Verification code',
+            html: '<h1>' + codeValue + '</h1>'
+        });
+
+        if (info.accepted[0] === existingUser.email) {
+            const hashedCodeValue = hmacProcess(codeValue, process.env.HMAC_VERIFICATION_CODE_SECRET);
+            existingUser.verificationCode = hashedCodeValue;
+            existingUser.verificationCodeValidation = Date.now();
+            await existingUser.save();
+            return res.status(200).json({
+                success: true,
+                message: 'Code sent successfully!',
+            });
+        }
+        res.status(400).json({
+            success: false,
+            message: 'Code sent failed!',
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+const verifyVerificationCode = async (req, res) => {
+    const { email, providedCode } = req.body;
+
+    try {
+        const codeValue = providedCode.toString();
+        const existingUser = await User.findOne({ email }).select("+verificationCode+verificationCodeValidation");
+
+        if (!existingUser) {
+            return res.status(404).json({ message: 'User does not exists' });
+        }
+
+        if (!existingUser.verificationCode || !existingUser.verificationCodeValidation) {
+            return res.status(400).json({
+                success: false,
+                message: 'Something is wrong with the code!',
+            });
+        }
+
+        if (Date.now() - existingUser.verificationCodeValidation > 5 * 60 * 1000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Code has been expired!',
+            });
+        }
+
+        const hashedCodeValue = hmacProcess(codeValue, process.env.HMAC_VERIFICATION_CODE_SECRET);
+
+        if (hashedCodeValue === existingUser.verificationCode) {
+            existingUser.verificationCode = undefined;
+            existingUser.verificationCodeValidation = undefined;
+            await existingUser.save();
+            return res.status(200).json({
+                success: true,
+                message: 'Your account has been verified!',
+            });
+        }
+        res.status(400).json({
+            success: false,
+            message: 'Unexpected error occurred!',
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+app.patch('/send-verification-code', sendVerificationCode);
+app.patch('/verify-verification-code', acceptCodeValidate, verifyVerificationCode);
 
 // Additional routes
 app.use("/", successRoutes);
