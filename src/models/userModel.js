@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Password must be provided!'],
     },
+    verified: {
+        type: Boolean,
+        default: false,
+    },
     verificationCode: {
         type: String,
         select: false,
