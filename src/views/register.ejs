@@ -5,26 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
 </head>
-
-<body>
-    <form action="/register" method="post">
-        <h2 class="signup">Register</h2>
-        <label for="name">Name</label>
-        <input type="text" name="name" placeholder="Name" required>
-
-        <label for="email">Email</label>
-        <input type="email" name="email" placeholder="Email" required>
-
-        <label for="password">Password</label>
-        <input type="password" name="password" placeholder="Password" required>
-
-        <button type="submit" class="submit-btn-signup">Submit</button>
-
-        <p class="account">Already have an account? Then,</p>
-        <a href="/login" class="btn-login">Log In</a>
-    </form>
-</body>
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
@@ -60,6 +42,7 @@
 
     label {
         display: block;
+        font-weight: bold;
         margin: 20px 0 10px;
     }
 
@@ -82,6 +65,30 @@
     .submit-btn-signup:hover {
         transition: 0.4ms ease-in;
         transform: scale(1.02);
+    }
+
+    #message {
+        margin: 10px 0;
+        display: inline-block;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        font-size: 17px;
+        font-weight: 600;
+    }
+
+    #eyeicon1 {
+        position: absolute;
+        font-size: 18px;
+        margin-left: -25px;
+        margin-top: 12px;
+    }
+
+    #eyeicon2 {
+        position: absolute;
+        font-size: 18px;
+        margin-left: -25px;
+        margin-top: 12px;
     }
 
     .account {
@@ -112,5 +119,86 @@
         transform: scale(1.01);
     }
 </style>
+
+<body>
+    <form action="/register" method="post">
+        <h2 class="signup">Register</h2>
+        <label for="name">Name</label>
+        <input type="text" name="name" placeholder="Name" required>
+
+        <label for="email">Email</label>
+        <input type="email" name="email" placeholder="Email" required>
+
+        <div>
+            <label for="password">Password</label>
+            <input type="password" name="password" placeholder="Password" id="password" required>
+            <i class="ri-eye-off-fill" id="eyeicon1"></i>
+        </div>
+
+        <div>
+            <label for="confirm_password">Confirm Password</label>
+            <input type="password" name="password" placeholder="Password" id="confirmPassword" required>
+            <i class="ri-eye-off-fill" id="eyeicon2"></i>
+        </div>
+
+        <p id="message"></p>
+
+        <button type="submit" class="submit-btn-signup" onclick="checkPassword()">Submit</button>
+
+        <p class="account">Already have an account? Then,</p>
+        <a href="/login" class="btn-login">Log In</a>
+    </form>
+</body>
+
+<script>
+
+    const checkPassword = () => {
+
+        let password = document.getElementById("password").value;
+        let confirmPassword = document.getElementById("confirmPassword").value;
+
+        let message = document.getElementById("message");
+
+        if (password.length !== 0) {
+            if (password === confirmPassword) {
+                message.textContent = "Passwords are matching";
+                message.style.backgroundColor = "#008000";
+            } else {
+                message.textContent = "Passwords don't match";
+                message.style.backgroundColor = "#ff0000";
+            }
+        } else {
+            message.textContent = "";
+        }
+    };
+
+    let eyeicon1 = document.getElementById("eyeicon1");
+    let eyeicon2 = document.getElementById("eyeicon2");
+    let password = document.getElementById("password");
+    let confirmPassword = document.getElementById("confirmPassword");
+
+    eyeicon1.onclick = () => {
+
+        if (password.type === "password") {
+            password.type = "text";
+            eyeicon1.className = "ri-eye-fill";
+        } else {
+            password.type = "password";
+            eyeicon1.className = "ri-eye-off-fill";
+        }
+    };
+
+    eyeicon2.onclick = () => {
+
+        if (confirmPassword.type === "password") {
+            confirmPassword.type = "text";
+            eyeicon2.className = "ri-eye-fill";
+        } else {
+            confirmPassword.type = "password";
+            eyeicon2.className = "ri-eye-off-fill";
+        }
+    };
+
+</script>
 
 </html>
