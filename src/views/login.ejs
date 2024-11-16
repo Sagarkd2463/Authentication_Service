@@ -91,6 +91,20 @@
         margin-top: 12px;
     }
 
+    .forgot {
+        position: absolute;
+        font-size: 16px;
+        margin-left: 320px;
+        margin-top: 25px;
+        text-decoration: none;
+        color: black;
+        font-weight: 600;
+    }
+
+    .forgot:hover {
+        text-decoration: underline;
+    }
+
     .account {
         margin-top: 25px;
         font-size: 18px;
@@ -321,13 +335,17 @@
 
         <div>
             <label for="confirm_password">Confirm Password</label>
-            <input type="password" name="password" placeholder="Password" id="confirmPassword" required>
+            <input type="password" name="confirm_password" placeholder="Password" id="confirmPassword" required>
             <i class="ri-eye-off-fill" id="eyeicon2"></i>
         </div>
 
         <p id="message"></p>
 
-        <button type="submit" class="submit-btn-login" onclick="checkPassword()">Log In</button>
+        <a class="forgot" href="/forgot-password">Forgot Password</a>
+
+        <a href="/profile" style="text-decoration: none;">
+            <button type="submit" class="submit-btn-login" onclick="checkPassword()">Log In</button>
+        </a>
 
         <p class="account">Don't have an account?</p>
         <a href="/register" class="btn-signup">Sign Up</a>

@@ -7,33 +7,21 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: [true, 'Email is required!'],
+        required: true,
         trim: true,
-        unique: [true, 'Email must be unique!'],
+        unique: true,
     },
     password: {
         type: String,
-        required: [true, 'Password must be provided!'],
+        required: true,
+    },
+    confirmpassword: {
+        type: String,
+        required: true,
     },
     verified: {
         type: Boolean,
         default: false,
-    },
-    verificationCode: {
-        type: String,
-        select: false,
-    },
-    verificationCodeValidation: {
-        type: Number,
-        select: false,
-    },
-    forgotPasswordCode: {
-        type: String,
-        select: false,
-    },
-    forgotPasswordCodeValidation: {
-        type: Number,
-        select: false,
     },
 }, { timestamps: true });
 

@@ -123,6 +123,7 @@
 <body>
     <form action="/register" method="post">
         <h2 class="signup">Register</h2>
+
         <label for="name">Name</label>
         <input type="text" name="name" placeholder="Name" required>
 
@@ -137,13 +138,15 @@
 
         <div>
             <label for="confirm_password">Confirm Password</label>
-            <input type="password" name="password" placeholder="Password" id="confirmPassword" required>
+            <input type="password" name="confirm_password" placeholder="Confirm Password" id="confirmPassword" required>
             <i class="ri-eye-off-fill" id="eyeicon2"></i>
         </div>
 
         <p id="message"></p>
 
-        <button type="submit" class="submit-btn-signup" onclick="checkPassword()">Submit</button>
+        <a href="/login" style="text-decoration: none;">
+            <button type="button" class="submit-btn-signup" onclick="checkPassword()">Submit</button>
+        </a>
 
         <p class="account">Already have an account? Then,</p>
         <a href="/login" class="btn-login">Log In</a>

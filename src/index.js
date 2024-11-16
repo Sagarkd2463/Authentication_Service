@@ -68,6 +68,10 @@ app.get("/login", (req, res) => {
     res.render('login');
 });
 
+app.get('/profile', (req, res) => {
+    res.render('profileUser', { name: req.user.name, email: req.user.email });
+});
+
 // Additional routes
 app.use("/", userRoutes);
 app.use("/", successRoutes);

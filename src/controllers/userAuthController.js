@@ -1,90 +1,129 @@
-const transport = require('../middleware/sendMail');
+const { generateToken } = require('../middleware/identification');
 const User = require('../models/userModel');
-const { hmacProcess } = require('../utils/hashing');
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+const { doHashPassword, doComparePassword } = require('../utils/hashing');
 
-exports.sendVerificationCode = async (req, res) => {
-    const { email } = req.body;
+const userRegister = async (req, res) => {
 
     try {
+
+        const { name, email, password } = req.body;
+
+        if (!name || !email || !password) {
+            return res.status(400).json({ success: false, message: "Please provide all required fields" });
+        }
+
         const existingUser = await User.findOne({ email });
-        if (!existingUser) {
-            return res.status(404).json({ message: 'User does not exists' });
+
+        if (existingUser) {
+            return res.status(400).json({ success: false, message: "User already registered. Please login!" });
         }
 
-        const codeValue = Math.floor(Math.random() * 1000000).toString();
-        let info = await transport.sendMail({
-            from: process.env.NODE_CODE_SENDING_EMAIL_ADDRESS,
-            to: existingUser.email,
-            subject: 'Password Verification',
-            html: '<h2>' + codeValue + '</h2>'
-        });
+        const hashedPassword = await doHashPassword(password);
 
-        if (info.accepted[0] === existingUser.email) {
-            const hashedCodeValue = hmacProcess(codeValue, process.env.HMAC_VERIFICATION_CODE_SECRET);
-            existingUser.verificationCode = hashedCodeValue;
-            existingUser.verificationCodeValidation = Date.now();
-            await existingUser.save();
-            return res.status(200).json({
-                success: true,
-                message: 'Code sent successfully!',
-            });
-        }
-        res.status(400).json({
-            success: false,
-            message: 'Code sent failed!',
-        });
+        const newUser = await User.create({ name, email, password: hashedPassword, confirmpassword: hashedPassword });
+
+        return res.status(201).json({ success: true, message: "User registered successfully!!!", newUser });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        return res.status(500).json({ success: false, message: "Registration failed...", error: error.message });
     }
 };
 
-exports.verifyVerificationCode = async (req, res) => {
-    const { email, providedCode } = req.body;
+const userLogin = async (req, res) => {
 
     try {
-        const codeValue = providedCode.toString();
-        const existingUser = await User.findOne({ email }).select("+verificationCode+verificationCodeValidation");
+        const { email, password } = req.body;
 
-        if (!existingUser) {
-            return res.status(404).json({ message: 'User does not exists' });
+        if (!email || !password) {
+            return res.status(400).json({ success: false, message: "Please provide all login required fields" });
         }
 
-        if (!existingUser.verificationCode || !existingUser.verificationCodeValidation) {
-            return res.status(400).json({
-                success: false,
-                message: 'Something is wrong with the code!',
-            });
+        const isUser = await User.findOne({ email });
+
+        const token = await generateToken(isUser._id);
+
+        if (!isUser) {
+            return res.status(400).json({ success: false, message: "User not found. Please register yourself!!" });
         }
 
-        if (Date.now() - existingUser.verificationCodeValidation > 5 * 60 * 1000) {
-            return res.status(400).json({
-                success: false,
-                message: 'Code has been expired!',
-            });
+        const isMatchPassword = await doComparePassword(password, isUser.password);
+
+        if (!isMatchPassword) {
+            return res.status(400).json({ success: false, message: "Please provide valid credentials" });
         }
 
-        const hashedCodeValue = hmacProcess(codeValue, process.env.HMAC_VERIFICATION_CODE_SECRET);
-
-        if (hashedCodeValue === existingUser.verificationCode) {
-            existingUser.verificationCode = undefined;
-            existingUser.verificationCodeValidation = undefined;
-            await existingUser.save();
-            return res.status(200).json({
-                success: true,
-                message: 'Your account has been verified!',
-            });
-        }
-        res.status(400).json({
-            success: false,
-            message: 'Unexpected error occurred!',
-        });
+        return res.status(200).json({ success: true, message: "User logged successfully!!!", token });
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        return res.status(500).json({ success: false, message: "Login failed...", error: error.message });
     }
 };
+
+const forgotPassword = async (req, res) => {
+
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ success: false, message: "Please provide a valid email" });
+        }
+
+        const checkUser = await User.findOne({ email });
+
+        if (!checkUser) {
+            return res.status(400).json({ success: false, message: "User not found. Please register yourself!!" });
+        }
+
+        const token = jwt.sign({ email }, process.env.JWT_SECRET_KEY, { expiresIn: "1h" });
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            secure: true,
+            auth: {
+                user: process.env.NODE_CODE_SENDING_EMAIL_ADDRESS,
+                pass: process.env.NODE_CODE_SENDING_EMAIL_PASSWORD,
+            },
+        });
+
+        const receiver = {
+            from: "deshpandesagar15613@gmail.com",
+            to: email,
+            subject: "Reset Password Request",
+            text: `Click on this link to generate your new password ${process.env.CLIENT_URL}/reset-password/${token}`,
+        };
+
+        await transporter.sendMail(receiver);
+
+        return res.status(200).json({ success: true, message: "Password reset link has been send successfully on your email, Please check it!" });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Failed to send reset password link", error: error.message });
+    }
+};
+
+const resetPassword = async (req, res) => {
+
+    try {
+        const { token } = req.params;
+        const { password, confirmpassword } = req.body;
+
+        if (!password && !confirmpassword) {
+            return res.status(400).json({ success: false, message: "Please provide a password" });
+        }
+
+        const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+        const user = await User.findOne({ email: decode.email });
+
+        const newHashPassword = await doHashPassword(password);
+        user.password = newHashPassword;
+        user.confirmpassword = newHashPassword;
+
+        await user.save();
+
+        return res.status(200).json({ success: true, message: "Password reset successfully!!!" });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Failed to reset password", error: error.message });
+    }
+};
+
+module.exports = { userRegister, userLogin, forgotPassword, resetPassword };
