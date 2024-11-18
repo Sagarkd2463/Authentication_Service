@@ -121,7 +121,7 @@
 </style>
 
 <body>
-    <form action="/register" method="post">
+    <form action="/register" method="post" onsubmit="handleRegistrationSubmit()">
         <h2 class="signup">Register</h2>
 
         <label for="name">Name</label>
@@ -137,16 +137,14 @@
         </div>
 
         <div>
-            <label for="confirm_password">Confirm Password</label>
-            <input type="password" name="confirm_password" placeholder="Confirm Password" id="confirmPassword" required>
+            <label for="confirmpassword">Confirm Password</label>
+            <input type="password" name="confirmpassword" placeholder="Confirm Password" id="confirmPassword" required>
             <i class="ri-eye-off-fill" id="eyeicon2"></i>
         </div>
 
         <p id="message"></p>
 
-        <a href="/login" style="text-decoration: none;">
-            <button type="button" class="submit-btn-signup" onclick="checkPassword()">Submit</button>
-        </a>
+        <button type="submit" class="submit-btn-signup">Submit</button>
 
         <p class="account">Already have an account? Then,</p>
         <a href="/login" class="btn-login">Log In</a>
@@ -155,50 +153,65 @@
 
 <script>
 
-    const checkPassword = () => {
+    document.getElementById('eyeicon1').addEventListener('click', function () {
+        const passwordField = document.getElementById('password');
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+        this.classList.toggle('ri-eye-fill');
+        this.classList.toggle('ri-eye-off-fill');
+    });
 
-        let password = document.getElementById("password").value;
-        let confirmPassword = document.getElementById("confirmPassword").value;
+    document.getElementById('eyeicon2').addEventListener('click', function () {
+        const passwordField = document.getElementById('confirmPassword');
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+        this.classList.toggle('ri-eye-fill');
+        this.classList.toggle('ri-eye-off-fill');
+    });
 
-        let message = document.getElementById("message");
+    document.getElementById('confirmpassword').addEventListener('input', function () {
+        const password = document.getElementById('password').value;
+        const confirmpassword = this.value; // 'this' refers to the confirmpassword input field
+        const message = document.getElementById('message');
 
+        // Password validation
         if (password.length !== 0) {
-            if (password === confirmPassword) {
+            if (password === confirmpassword) {
                 message.textContent = "Passwords are matching";
-                message.style.backgroundColor = "#008000";
+                message.style.color = "#008000"; // Green
             } else {
                 message.textContent = "Passwords don't match";
-                message.style.backgroundColor = "#ff0000";
+                message.style.color = "#ff0000"; // Red
             }
         } else {
-            message.textContent = "";
+            message.textContent = "Password cannot be empty";
+            message.style.color = "#ff0000";
         }
-    };
+    });
 
-    let eyeicon1 = document.getElementById("eyeicon1");
-    let eyeicon2 = document.getElementById("eyeicon2");
-    let password = document.getElementById("password");
-    let confirmPassword = document.getElementById("confirmPassword");
 
-    eyeicon1.onclick = () => {
+    const handleRegistrationSubmit = async () => {
 
-        if (password.type === "password") {
-            password.type = "text";
-            eyeicon1.className = "ri-eye-fill";
+        const name = document.querySelector('name').value;
+        const email = document.querySelector('email').value;
+        const password = document.querySelector('password').value;
+        const confirmpassword = document.querySelector('confirmpassword').value;
+
+        const response = await fetch('/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, email, password, confirmpassword }),
+        });
+
+        const data = await response.json();
+
+        if (data.success === true) {
+            console.log('User registered successfully!');
+            window.location.href = '/login';
         } else {
-            password.type = "password";
-            eyeicon1.className = "ri-eye-off-fill";
-        }
-    };
-
-    eyeicon2.onclick = () => {
-
-        if (confirmPassword.type === "password") {
-            confirmPassword.type = "text";
-            eyeicon2.className = "ri-eye-fill";
-        } else {
-            confirmPassword.type = "password";
-            eyeicon2.className = "ri-eye-off-fill";
+            console.log('Registration failed!');
         }
     };
 

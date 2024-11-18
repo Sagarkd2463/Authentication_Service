@@ -68,8 +68,19 @@ app.get("/login", (req, res) => {
     res.render('login');
 });
 
+app.get("/forgot-password", (req, res) => {
+    res.render("forgotPassword");
+});
+
+app.get("/reset-password/:token", (req, res) => {
+    res.render("resetPassword");
+});
+
 app.get('/profile', (req, res) => {
-    res.render('profileUser', { name: req.user.name, email: req.user.email });
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+    res.render('profileUser', { name: req.session.user.name, email: req.session.user.email });
 });
 
 // Additional routes

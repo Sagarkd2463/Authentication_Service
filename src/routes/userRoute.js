@@ -10,7 +10,7 @@ router.post("/forget-password", forgotPassword);
 
 router.post("/reset-password/:token", resetPassword);
 
-router.post("/logout", (req, res, next) => {
+router.get("/logout", (req, res, next) => {
     req.logout((err) => {
         if (err) return next(err);
         res.redirect("/");

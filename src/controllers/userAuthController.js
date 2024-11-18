@@ -5,17 +5,18 @@ const nodemailer = require('nodemailer');
 const { doHashPassword, doComparePassword } = require('../utils/hashing');
 
 const userRegister = async (req, res) => {
-
     try {
+        const { name, email, password, confirmpassword } = req.body;
 
-        const { name, email, password } = req.body;
-
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !confirmpassword) {
             return res.status(400).json({ success: false, message: "Please provide all required fields" });
         }
 
-        const existingUser = await User.findOne({ email });
+        if (password !== confirmpassword) {
+            return res.status(400).json({ success: false, message: "Passwords do not match" });
+        }
 
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ success: false, message: "User already registered. Please login!" });
         }
@@ -24,14 +25,13 @@ const userRegister = async (req, res) => {
 
         const newUser = await User.create({ name, email, password: hashedPassword, confirmpassword: hashedPassword });
 
-        return res.status(201).json({ success: true, message: "User registered successfully!!!", newUser });
+        return res.redirect('/login');
     } catch (error) {
         return res.status(500).json({ success: false, message: "Registration failed...", error: error.message });
     }
 };
 
 const userLogin = async (req, res) => {
-
     try {
         const { email, password } = req.body;
 
@@ -40,20 +40,19 @@ const userLogin = async (req, res) => {
         }
 
         const isUser = await User.findOne({ email });
-
-        const token = await generateToken(isUser._id);
-
         if (!isUser) {
-            return res.status(400).json({ success: false, message: "User not found. Please register yourself!!" });
+            return res.status(400).json({ success: false, message: "User not found. Please register!" });
         }
 
         const isMatchPassword = await doComparePassword(password, isUser.password);
-
         if (!isMatchPassword) {
-            return res.status(400).json({ success: false, message: "Please provide valid credentials" });
+            return res.status(400).json({ success: false, message: "Invalid credentials" });
         }
 
-        return res.status(200).json({ success: true, message: "User logged successfully!!!", token });
+        const token = await generateToken(isUser._id);
+        req.session.user = { id: isUser._id, name: isUser.name, email: isUser.email };
+
+        return res.redirect('/profile');
     } catch (error) {
         return res.status(500).json({ success: false, message: "Login failed...", error: error.message });
     }
@@ -104,9 +103,9 @@ const resetPassword = async (req, res) => {
 
     try {
         const { token } = req.params;
-        const { password, confirmpassword } = req.body;
+        const { password } = req.body;
 
-        if (!password && !confirmpassword) {
+        if (!password) {
             return res.status(400).json({ success: false, message: "Please provide a password" });
         }
 
@@ -120,7 +119,7 @@ const resetPassword = async (req, res) => {
 
         await user.save();
 
-        return res.status(200).json({ success: true, message: "Password reset successfully!!!" });
+        return res.redirect('/login');
     } catch (error) {
         return res.status(500).json({ success: false, message: "Failed to reset password", error: error.message });
     }
