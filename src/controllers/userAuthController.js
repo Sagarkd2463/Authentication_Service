@@ -25,7 +25,7 @@ const userRegister = async (req, res) => {
 
         const newUser = await User.create({ name, email, password: hashedPassword, confirmpassword: hashedPassword });
 
-        return res.redirect('/login');
+        return res.redirect(201, '/login');
     } catch (error) {
         return res.status(500).json({ success: false, message: "Registration failed...", error: error.message });
     }
@@ -52,7 +52,7 @@ const userLogin = async (req, res) => {
         const token = await generateToken(isUser._id);
         req.session.user = { id: isUser._id, name: isUser.name, email: isUser.email };
 
-        return res.redirect('/profile');
+        return res.redirect(200, '/profile');
     } catch (error) {
         return res.status(500).json({ success: false, message: "Login failed...", error: error.message });
     }
@@ -110,17 +110,26 @@ const resetPassword = async (req, res) => {
         }
 
         const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        if (!decode?.email) {
+            return res.status(400).json({ success: false, message: "Invalid or expired token" });
+        }
 
         const user = await User.findOne({ email: decode.email });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
 
         const newHashPassword = await doHashPassword(password);
         user.password = newHashPassword;
-        user.confirmpassword = newHashPassword;
 
         await user.save();
 
-        return res.redirect('/login');
+        return res.status(200).json({ success: true, message: "Password reset successfully" });
     } catch (error) {
+        if (error.name === "JsonWebTokenError" || error.name === "TokenExpiredError") {
+            return res.status(401).json({ success: false, message: "Invalid or expired token" });
+        }
+
         return res.status(500).json({ success: false, message: "Failed to reset password", error: error.message });
     }
 };

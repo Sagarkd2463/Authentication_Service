@@ -69,8 +69,8 @@
 
     #message {
         margin: 10px 0;
-        display: inline-block;
-        color: white;
+        display: none;
+        background: whitesmoke;
         padding: 15px 20px;
         border-radius: 8px;
         font-size: 17px;
@@ -92,13 +92,13 @@
     }
 
     .forgot {
-        position: absolute;
+        position: fixed;
         font-size: 16px;
-        margin-left: 320px;
-        margin-top: 25px;
+        margin-left: 360px;
+        margin-top: 70px;
         text-decoration: none;
         color: black;
-        font-weight: 600;
+        font-weight: 600
     }
 
     .forgot:hover {
@@ -335,13 +335,15 @@
 
         <div>
             <label for="confirmpassword">Confirm Password</label>
-            <input type="password" name="confirmpassword" placeholder="Password" id="confirmPassword" required>
+            <input type="password" name="confirmpassword" placeholder="Confirm Password" id="confirmpassword" required>
             <i class="ri-eye-off-fill" id="eyeicon2"></i>
         </div>
 
-        <p id="message"></p>
+        <div style="display: flex; flex-direction: column;">
+            <p id="message"></p>
 
-        <a class="forgot" href="/forgot-password">Forgot Password</a>
+            <a class="forgot" href="/forgot-password">Forgot Password</a>
+        </div>
 
         <button type="submit" class="submit-btn-login">Log In</button>
 
@@ -398,7 +400,7 @@
     });
 
     document.getElementById('eyeicon2').addEventListener('click', function () {
-        const passwordField = document.getElementById('confirmPassword');
+        const passwordField = document.getElementById('confirmpassword');
         const type = passwordField.type === 'password' ? 'text' : 'password';
         passwordField.type = type;
         this.classList.toggle('ri-eye-fill');
@@ -414,13 +416,16 @@
         if (password.length !== 0) {
             if (password === confirmpassword) {
                 message.textContent = "Passwords are matching";
+                message.style.display = "inline-block";
                 message.style.color = "#008000"; // Green
             } else {
                 message.textContent = "Passwords don't match";
+                message.style.display = "inline-block";
                 message.style.color = "#ff0000"; // Red
             }
         } else {
             message.textContent = "Password cannot be empty";
+            message.style.display = "inline-block";
             message.style.color = "#ff0000";
         }
     });

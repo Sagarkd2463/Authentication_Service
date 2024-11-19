@@ -69,8 +69,8 @@
 
     #message {
         margin: 10px 0;
-        display: inline-block;
-        color: white;
+        display: none;
+        background: whitesmoke;
         padding: 15px 20px;
         border-radius: 8px;
         font-size: 17px;
@@ -138,7 +138,7 @@
 
         <div>
             <label for="confirmpassword">Confirm Password</label>
-            <input type="password" name="confirmpassword" placeholder="Confirm Password" id="confirmPassword" required>
+            <input type="password" name="confirmpassword" placeholder="Confirm Password" id="confirmpassword" required>
             <i class="ri-eye-off-fill" id="eyeicon2"></i>
         </div>
 
@@ -162,7 +162,7 @@
     });
 
     document.getElementById('eyeicon2').addEventListener('click', function () {
-        const passwordField = document.getElementById('confirmPassword');
+        const passwordField = document.getElementById('confirmpassword');
         const type = passwordField.type === 'password' ? 'text' : 'password';
         passwordField.type = type;
         this.classList.toggle('ri-eye-fill');
@@ -178,13 +178,16 @@
         if (password.length !== 0) {
             if (password === confirmpassword) {
                 message.textContent = "Passwords are matching";
+                message.style.display = "inline-block";
                 message.style.color = "#008000"; // Green
             } else {
                 message.textContent = "Passwords don't match";
+                message.style.display = "inline-block";
                 message.style.color = "#ff0000"; // Red
             }
         } else {
             message.textContent = "Password cannot be empty";
+            message.style.display = "inline-block";
             message.style.color = "#ff0000";
         }
     });
