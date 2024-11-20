@@ -8,26 +8,62 @@ const userRegister = async (req, res) => {
     try {
         const { name, email, password, confirmpassword } = req.body;
 
+        // Validate required fields
         if (!name || !email || !password || !confirmpassword) {
+            if (req.headers['accept'] && req.headers['accept'].includes('text/html')) {
+                return res.redirect('/error');
+            }
             return res.status(400).json({ success: false, message: "Please provide all required fields" });
         }
 
+        // Validate password match
         if (password !== confirmpassword) {
+            if (req.headers['accept'] && req.headers['accept'].includes('text/html')) {
+                return res.redirect('/error');
+            }
             return res.status(400).json({ success: false, message: "Passwords do not match" });
         }
 
+        // Check if the user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
+            if (req.headers['accept'] && req.headers['accept'].includes('text/html')) {
+                return res.redirect('/error');
+            }
             return res.status(400).json({ success: false, message: "User already registered. Please login!" });
         }
 
+        // Hash the password
         const hashedPassword = await doHashPassword(password);
 
-        const newUser = await User.create({ name, email, password: hashedPassword, confirmpassword: hashedPassword });
+        // Create the new user
+        const newUser = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+            confirmpassword: hashedPassword,
+        });
 
-        return res.redirect(201, '/login');
+        // Redirect for browser-based requests
+        if (req.headers['accept'] && req.headers['accept'].includes('text/html')) {
+            return res.redirect('/login');
+        }
+
+        return res.status(201).json({
+            success: true,
+            message: "User registered successfully!!!",
+            user: newUser,
+        });
     } catch (error) {
-        return res.status(500).json({ success: false, message: "Registration failed...", error: error.message });
+        // Redirect to /error on any unhandled exception
+        if (req.headers['accept'] && req.headers['accept'].includes('text/html')) {
+            return res.redirect('/error');
+        }
+        return res.status(500).json({
+            success: false,
+            message: "Registration failed...",
+            error: error.message,
+        });
     }
 };
 
@@ -35,26 +71,56 @@ const userLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        // Validate required fields
         if (!email || !password) {
+            if (req.headers['accept'] && req.headers['accept'].includes('text/html')) {
+                return res.redirect('/error');
+            }
             return res.status(400).json({ success: false, message: "Please provide all login required fields" });
         }
 
+        // Check if the user exists
         const isUser = await User.findOne({ email });
         if (!isUser) {
+            if (req.headers['accept'] && req.headers['accept'].includes('text/html')) {
+                return res.redirect('/error');
+            }
             return res.status(400).json({ success: false, message: "User not found. Please register!" });
         }
 
+        // Validate password
         const isMatchPassword = await doComparePassword(password, isUser.password);
         if (!isMatchPassword) {
-            return res.status(400).json({ success: false, message: "Invalid credentials" });
+            if (req.headers['accept'] && req.headers['accept'].includes('text/html')) {
+                return res.redirect('/error');
+            }
+            return res.status(400).json({ success: false, message: "Invalid password credentials" });
         }
 
+        // Generate token and set session
         const token = await generateToken(isUser._id);
         req.session.user = { id: isUser._id, name: isUser.name, email: isUser.email };
 
-        return res.redirect(200, '/profile');
+        // Redirect for browser-based requests
+        if (req.headers['accept'] && req.headers['accept'].includes('text/html')) {
+            return res.redirect('/profile');
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "User login successfull!!!",
+            token,
+        });
     } catch (error) {
-        return res.status(500).json({ success: false, message: "Login failed...", error: error.message });
+        // Handle unexpected errors
+        if (req.headers['accept'] && req.headers['accept'].includes('text/html')) {
+            return res.redirect('/error');
+        }
+        return res.status(500).json({
+            success: false,
+            message: "Login failed...",
+            error: error.message,
+        });
     }
 };
 
@@ -93,9 +159,16 @@ const forgotPassword = async (req, res) => {
 
         await transporter.sendMail(receiver);
 
-        return res.status(200).json({ success: true, message: "Password reset link has been send successfully on your email, Please check it!" });
+        return res.status(200).json({
+            success: true,
+            message: "Password reset link has been send successfully on your email, Please check it!"
+        });
     } catch (error) {
-        return res.status(500).json({ success: false, message: "Failed to send reset password link", error: error.message });
+        return res.status(500).json({
+            success: false,
+            message: "Failed to send reset password link",
+            error: error.message
+        });
     }
 };
 
@@ -124,13 +197,32 @@ const resetPassword = async (req, res) => {
 
         await user.save();
 
-        return res.status(200).json({ success: true, message: "Password reset successfully" });
-    } catch (error) {
-        if (error.name === "JsonWebTokenError" || error.name === "TokenExpiredError") {
-            return res.status(401).json({ success: false, message: "Invalid or expired token" });
+        // Check if the request is expecting HTML (e.g., from a browser)
+        if (req.headers['accept'] && req.headers['accept'].includes('text/html')) {
+            return res.redirect('/login');
         }
 
-        return res.status(500).json({ success: false, message: "Failed to reset password", error: error.message });
+        if (!req.headers['accept'] && !req.headers['accept'].includes('text/html')) {
+            return res.redirect('/error');
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Password reset successfully"
+        });
+    } catch (error) {
+        if (error.name === "JsonWebTokenError" || error.name === "TokenExpiredError") {
+            return res.status(401).json({
+                success: false,
+                message: error.message
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to reset password",
+            error: error.message
+        });
     }
 };
 

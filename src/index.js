@@ -76,6 +76,10 @@ app.get("/reset-password/:token", (req, res) => {
     res.render("resetPassword");
 });
 
+app.get("/error", (req, res) => {
+    res.render("error");
+});
+
 app.get('/profile', (req, res) => {
     if (!req.session.user) {
         return res.redirect('/login');

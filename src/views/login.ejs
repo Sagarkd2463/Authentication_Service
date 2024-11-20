@@ -432,9 +432,9 @@
 
     const handleLoginSubmit = async () => {
 
-        const email = document.querySelector('email').value;
-        const password = document.querySelector('password').value;
-        const confirmpassword = document.querySelector('confirmpassword').value;
+        const email = document.querySelector('#email').value;
+        const password = document.querySelector('#password').value;
+        const confirmpassword = document.querySelector('#confirmpassword').value;
 
         const response = await fetch('/login', {
             method: 'POST',
@@ -446,11 +446,17 @@
 
         const data = await response.json();
 
-        if (data.success === true) {
-            console.log('User logged successfully!');
-            window.location.href = '/profile';
+        if (response.ok && data.success) {
+            if (password !== confirmpassword) {
+                console.log('User login unsuccessfull!!');
+                window.location.href = '/error';
+            } else {
+                console.log('User login successfull!!');
+                window.location.href = '/profile';
+            }
         } else {
             console.log('Login failed!');
+            window.location.href = '/error';
         }
     };
 </script>

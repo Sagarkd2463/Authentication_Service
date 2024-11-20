@@ -194,27 +194,33 @@
 
 
     const handleRegistrationSubmit = async () => {
+        const name = document.querySelector('#name').value;
+        const email = document.querySelector('#email').value;
+        const password = document.querySelector('#password').value;
+        const confirmpassword = document.querySelector('#confirmpassword').value;
 
-        const name = document.querySelector('name').value;
-        const email = document.querySelector('email').value;
-        const password = document.querySelector('password').value;
-        const confirmpassword = document.querySelector('confirmpassword').value;
+        try {
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, password, confirmpassword }),
+            });
 
-        const response = await fetch('/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name, email, password, confirmpassword }),
-        });
+            const data = await response.json();
+            console.log(data);
 
-        const data = await response.json();
-
-        if (data.success === true) {
-            console.log('User registered successfully!');
-            window.location.href = '/login';
-        } else {
-            console.log('Registration failed!');
+            if (response.ok && data.success) {
+                console.log('User registered successfully!');
+                window.location.href = '/login';
+            } else {
+                console.error('Registration failed:', data.message || 'Unknown error');
+                window.location.href = '/error';
+            }
+        } catch (error) {
+            console.error('An error occurred:', error.message);
+            window.location.href = '/error';
         }
     };
 
