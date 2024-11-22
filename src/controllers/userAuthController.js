@@ -173,7 +173,6 @@ const forgotPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
-
     try {
         const { token } = req.params;
         const { password } = req.body;
@@ -197,31 +196,19 @@ const resetPassword = async (req, res) => {
 
         await user.save();
 
-        // Check if the request is expecting HTML (e.g., from a browser)
-        if (req.headers['accept'] && req.headers['accept'].includes('text/html')) {
-            return res.redirect('/login');
-        }
-
-        if (!req.headers['accept'] && !req.headers['accept'].includes('text/html')) {
-            return res.redirect('/error');
-        }
-
         return res.status(200).json({
             success: true,
-            message: "Password reset successfully"
+            message: "Password reset successfully",
         });
     } catch (error) {
         if (error.name === "JsonWebTokenError" || error.name === "TokenExpiredError") {
-            return res.status(401).json({
-                success: false,
-                message: error.message
-            });
+            return res.status(401).json({ success: false, message: "Invalid or expired token" });
         }
 
         return res.status(500).json({
             success: false,
             message: "Failed to reset password",
-            error: error.message
+            error: error.message,
         });
     }
 };

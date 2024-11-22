@@ -12,11 +12,7 @@ const app = express();
 // Database connection
 require('./database/db'); // Ensure database connection loads before using models
 
-// Import the passport 
-const { initializingPassport } = require('./controllers/userPassport');
-
 // Initialize Passport strategies
-initializingPassport(passport);
 require('./controllers/googlePassport');
 require('./controllers/facebookPassport');
 require('./controllers/githubPassport');
@@ -32,7 +28,7 @@ app.use(bodyParser.json());
 
 // Configure session middleware BEFORE initializing passport
 app.use(session({
-    secret: process.env.SESSION || 'yourSecretKey', // Provide a fallback if SESSION is undefined
+    secret: process.env.SESSION || 'yourSecretKey',
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false } // Use secure: true in production with HTTPS
