@@ -1,5 +1,6 @@
 require('dotenv').config();
 const passport = require('passport');
+const config = require('../config/config');
 const LinkedinStrategy = require('passport-linkedin-oauth2').Strategy;
 
 // Serialize user
@@ -14,9 +15,9 @@ passport.deserializeUser(async function (id, done) {
 
 // Linkedin Strategy setup
 passport.use(new LinkedinStrategy({
-    clientID: process.env.LINKEDIN_CLIENT_ID,
-    clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
-    callbackURL: process.env.LINKEDIN_CALLBACK_URL,
+    clientID: config.linkedinAuthenticate.LINKEDIN_CLIENT_ID,
+    clientSecret: config.linkedinAuthenticate.LINKEDIN_CLIENT_SECRET,
+    callbackURL: 'http://localhost:5000/auth/linkedin/callback',
     scope: ['r_emailaddress', 'r_liteprofile'],
 }, async function (accessToken, refreshToken, profile, done) {
     try {

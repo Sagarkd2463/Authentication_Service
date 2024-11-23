@@ -9,12 +9,9 @@ app.get('/auth/google/callback',
     passport.authenticate('google', {
         failureRedirect: '/login',
         failureMessage: 'Oops! Login failed, Please try again!!',
-    }),
-    (req, res) => {
-        console.log('Successfully authenticated with Google');
-        res.redirect('/success/google');
-    }
-);
+        successRedirect: '/success/google',
+        successMessage: 'Successfully authenticated with Google'
+    }));
 
 app.get('/auth/google/logout', (req, res) => {
     req.logout((err) => {
@@ -40,12 +37,9 @@ app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {
         failureRedirect: '/login',
         failureMessage: 'Oops! Login failed, Please try again!!',
-    }),
-    (req, res) => {
-        console.log('Successfully authenticated with Facebook');
-        res.redirect('/success/facebook');
-    }
-);
+        successRedirect: '/success/facebook',
+        successMessage: 'Successfully authenticated with Facebook'
+    }));
 
 app.get('/auth/facebook/logout', (req, res) => {
     req.session.destroy((err) => {
@@ -61,12 +55,9 @@ app.get('/auth/github/callback',
     passport.authenticate('github', {
         failureRedirect: '/login',
         failureMessage: 'Oops! Login failed, Please try again!!',
-    }),
-    (req, res) => {
-        console.log('Successfully authenticated with GitHub');
-        res.redirect('/success/github');
-    }
-);
+        successRedirect: '/success/github',
+        successMessage: 'Successfully authenticated with GitHub'
+    }));
 
 app.get('/auth/github/logout', (req, res) => {
     req.session.destroy((err) => {
@@ -82,12 +73,9 @@ app.get('/auth/linkedin/callback',
     passport.authenticate('linkedin', {
         failureRedirect: '/login',
         failureMessage: 'Oops! Login failed, Please try again!!',
-    }),
-    (req, res) => {
-        console.log('Successfully authenticated with LinkedIn');
-        res.redirect('/success/linkedin');
-    }
-);
+        successRedirect: '/success/linkedin',
+        successMessage: 'Successfully authenticated with LinkedIn'
+    }));
 
 app.get('/auth/linkedin/logout', (req, res) => {
     req.session.destroy((err) => {

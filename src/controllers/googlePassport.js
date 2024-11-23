@@ -3,6 +3,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const GUser = require('../models/googleModel');
 const { default: mongoose } = require('mongoose');
+const config = require('../config/config');
 
 // Serialize user
 passport.serializeUser(function (user, done) {
@@ -21,16 +22,15 @@ passport.deserializeUser(async function (id, done) {
 
 // Google Strategy setup
 passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    clientID: config.googleAuthenticate.GOOGLE_CLIENT_ID,
+    clientSecret: config.googleAuthenticate.GOOGLE_CLIENT_SECRET,
+    callbackURL: 'http://localhost:5000/auth/google/callback',
 },
     async function (accessToken, refreshToken, profile, done) {
         try {
             let user = await GUser.findOne({ googleId: profile.id });
 
             if (user) {
-                console.log("User Already Found...");
                 return done(null, user);
             } else {
                 // Create a new user if not found
@@ -43,7 +43,6 @@ passport.use(new GoogleStrategy({
                 });
 
                 await newUser.save();  // Save the new user to the database
-                console.log("New User Created");
                 return done(null, newUser);
             }
         } catch (err) {

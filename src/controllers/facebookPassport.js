@@ -3,6 +3,7 @@ const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
 const FUser = require('../models/facebookModel');
 const { default: mongoose } = require('mongoose');
+const config = require('../config/config');
 
 // Serialize user
 passport.serializeUser(function (user, done) {
@@ -21,9 +22,9 @@ passport.deserializeUser(async function (id, done) {
 
 // Facebook Strategy setup
 passport.use(new FacebookStrategy({
-    clientID: process.env.FACEBOOK_CLIENT_ID,
-    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-    callbackURL: process.env.FACEBOOK_CALLBACK_URL,
+    clientID: config.facebookAuthenticate.FACEBOOK_CLIENT_ID,
+    clientSecret: config.facebookAuthenticate.FACEBOOK_CLIENT_SECRET,
+    callbackURL: 'http://localhost:5000/auth/facebook/callback',
     profileFields: ['id', 'displayName', 'name', 'gender', 'email', 'picture.type(large)']
 },
     async function (accessToken, refreshToken, profile, done) {
@@ -31,7 +32,6 @@ passport.use(new FacebookStrategy({
             let user = await FUser.findOne({ facebookId: profile.id.toString() });
 
             if (user) {
-                console.log("User Already Found...");
                 return done(null, user);
             } else {
                 // Create a new user if not found
@@ -46,7 +46,6 @@ passport.use(new FacebookStrategy({
                 });
 
                 await newUser.save();  // Save the new user to the database
-                console.log("New User Created");
                 return done(null, newUser);
             }
         } catch (err) {

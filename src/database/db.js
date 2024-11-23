@@ -8,3 +8,5 @@ mongoose.connect(url)
     .catch((err) => {
         console.log("No DB Connected", err);
     });
+
+mongoose.set('bufferTimeoutMS', 20000); // 20 seconds

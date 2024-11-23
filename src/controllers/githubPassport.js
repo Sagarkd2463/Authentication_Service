@@ -3,6 +3,7 @@ const passport = require('passport');
 const GithubStrategy = require('passport-github').Strategy;
 const GitUser = require('../models/githubModel');
 const { default: mongoose } = require('mongoose');
+const config = require('../config/config');
 
 // Serialize user
 passport.serializeUser(function (user, done) {
@@ -21,16 +22,15 @@ passport.deserializeUser(async function (id, done) {
 
 // Github Strategy setup
 passport.use(new GithubStrategy({
-    clientID: process.env.GITHUB_CLIENT_ID,
-    clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: process.env.GITHUB_CALLBACK_URL,
+    clientID: config.githubAuthenticate.GITHUB_CLIENT_ID,
+    clientSecret: config.githubAuthenticate.GITHUB_CLIENT_SECRET,
+    callbackURL: 'http://localhost:5000/auth/github/callback',
 },
     async function (accessToken, refreshToken, profile, done) {
         try {
             let user = await GitUser.findOne({ githubId: profile.id.toString() });
 
             if (user) {
-                console.log("User Already Found...");
                 return done(null, user);
             } else {
                 // Create a new user if not found
@@ -45,7 +45,6 @@ passport.use(new GithubStrategy({
                 });
 
                 await newUser.save();  // Save the new user to the database
-                console.log("New User Created");
                 return done(null, newUser);
             }
         } catch (err) {
