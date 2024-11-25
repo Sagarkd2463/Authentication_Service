@@ -3,7 +3,6 @@ const passport = require('passport');
 const config = require('../config/config');
 const LinkedinStrategy = require('passport-linkedin-oauth2').Strategy;
 
-// Serialize user
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
@@ -18,15 +17,18 @@ passport.use(new LinkedinStrategy({
     clientID: config.linkedinAuthenticate.LINKEDIN_CLIENT_ID,
     clientSecret: config.linkedinAuthenticate.LINKEDIN_CLIENT_SECRET,
     callbackURL: 'http://localhost:5000/auth/linkedin/callback',
-    scope: ['r_emailaddress', 'r_liteprofile'],
-}, async function (accessToken, refreshToken, profile, done) {
-    try {
-        console.log('Profile:', profile);
-        done(null, profile);
-    } catch (error) {
-        console.error('Error fetching profile:', error);
-        done(error);
+    profileFields: ['id', 'firstName', 'lastName', 'emailAddress', 'profilePicture'],
+},
+    async function (accessToken, refreshToken, profile, done) {
+        try {
+            console.log('Access Token:', accessToken);
+            console.log('Profile:', profile);
+            done(null, profile);
+        } catch (error) {
+            console.error('Error fetching profile:', error);
+            done(error);
+        }
     }
-}));
+));
 
 module.exports = LinkedinStrategy;

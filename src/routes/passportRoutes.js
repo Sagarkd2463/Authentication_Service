@@ -66,7 +66,7 @@ app.get('/auth/github/logout', (req, res) => {
 });
 
 app.get('/auth/linkedin',
-    passport.authenticate('linkedin', { scope: 'email' })
+    passport.authenticate('linkedin')
 );
 
 app.get('/auth/linkedin/callback',
@@ -75,12 +75,11 @@ app.get('/auth/linkedin/callback',
         failureMessage: 'Oops! Login failed, Please try again!!',
         successRedirect: '/success/linkedin',
         successMessage: 'Successfully authenticated with LinkedIn'
-    }));
+    })
+);
 
 app.get('/auth/linkedin/logout', (req, res) => {
-    req.session.destroy((err) => {
-        req.logout(() => res.redirect('/'));
-    });
+    req.logout(() => res.redirect('/'));
 });
 
 module.exports = app;

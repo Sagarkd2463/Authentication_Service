@@ -59,7 +59,7 @@ app.get('/success/linkedin', (req, res) => {
 
     try {
         res.render('profilelinkedin', {
-            name: req.user.displayName
+            name: req.user.displayName || `${req.user.firstName} ${req.user.lastName}`
         });
     } catch (error) {
         res.status(500).send('Internal Server Error');
