@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
 
-const googleSchema = new mongoose.Schema({
-    googleId: {
+const linkedinSchema = new mongoose.Schema({
+    linkedinId: {
         type: String,
     },
     displayName: {
+        type: String,
+    },
+    email: {
         type: String,
     },
     photo: {
@@ -19,6 +22,6 @@ const googleSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
-const GoogleUser = mongoose.model('google-user', googleSchema);
+const LinkedinUser = mongoose.model('linkedin-user', linkedinSchema);
 
-module.exports = GoogleUser;
+module.exports = LinkedinUser;

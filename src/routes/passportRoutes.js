@@ -6,40 +6,27 @@ app.get('/auth/google',
 );
 
 app.get('/auth/google/callback',
-    passport.authenticate('google', {
-        failureRedirect: '/login',
-        failureMessage: 'Oops! Login failed, Please try again!!',
-        successRedirect: '/success/google',
-        successMessage: 'Successfully authenticated with Google'
-    }));
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    function (req, res) {
+        // Successful authentication, redirect home.
+        res.redirect('/success/google');
+    });
 
 app.get('/auth/google/logout', (req, res) => {
-    req.logout((err) => {
-        if (err) {
-            console.error("Error during logout:", err);
-            return res.status(500).send('Internal Server Error');
-        }
-        req.session.destroy((err) => {
-            if (err) {
-                console.error("Error during session destruction:", err);
-                return res.status(500).send('Internal Server Error');
-            }
-            res.redirect('/');
-        });
+    req.session.destroy((err) => {
+        req.logout(() => res.redirect('/'));
     });
 });
 
 app.get('/auth/facebook',
-    passport.authenticate('facebook', { scope: 'email' })
-);
+    passport.authenticate('facebook'));
 
 app.get('/auth/facebook/callback',
-    passport.authenticate('facebook', {
-        failureRedirect: '/login',
-        failureMessage: 'Oops! Login failed, Please try again!!',
-        successRedirect: '/success/facebook',
-        successMessage: 'Successfully authenticated with Facebook'
-    }));
+    passport.authenticate('facebook', { failureRedirect: '/login' }),
+    function (req, res) {
+        // Successful authentication, redirect home.
+        res.redirect('/');
+    });
 
 app.get('/auth/facebook/logout', (req, res) => {
     req.session.destroy((err) => {
@@ -47,17 +34,16 @@ app.get('/auth/facebook/logout', (req, res) => {
     });
 });
 
+
 app.get('/auth/github',
-    passport.authenticate('github', { scope: 'email' })
-);
+    passport.authenticate('github', { scope: ['user:email'] }));
 
 app.get('/auth/github/callback',
-    passport.authenticate('github', {
-        failureRedirect: '/login',
-        failureMessage: 'Oops! Login failed, Please try again!!',
-        successRedirect: '/success/github',
-        successMessage: 'Successfully authenticated with GitHub'
-    }));
+    passport.authenticate('github', { failureRedirect: '/login' }),
+    function (req, res) {
+        // Successful authentication, redirect home.
+        res.redirect('/');
+    });
 
 app.get('/auth/github/logout', (req, res) => {
     req.session.destroy((err) => {
@@ -66,17 +52,15 @@ app.get('/auth/github/logout', (req, res) => {
 });
 
 app.get('/auth/linkedin',
-    passport.authenticate('linkedin')
+    passport.authenticate('linkedin', { state: true })
 );
 
 app.get('/auth/linkedin/callback',
-    passport.authenticate('linkedin', {
-        failureRedirect: '/login',
-        failureMessage: 'Oops! Login failed, Please try again!!',
-        successRedirect: '/success/linkedin',
-        successMessage: 'Successfully authenticated with LinkedIn'
-    })
-);
+    passport.authenticate('linkedin', { failureRedirect: '/login' }),
+    function (req, res) {
+        // Successful authentication, redirect home.
+        res.redirect('/');
+    });
 
 app.get('/auth/linkedin/logout', (req, res) => {
     req.logout(() => res.redirect('/'));

@@ -23,7 +23,7 @@ const githubSchema = new mongoose.Schema({
         type: Date,
         default: Date.now(),
     },
-});
+}, { timestamps: true });
 
 const GithubUser = mongoose.model('github-user', githubSchema);
 

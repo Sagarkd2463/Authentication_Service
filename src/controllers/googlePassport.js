@@ -1,4 +1,3 @@
-require('dotenv').config();
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const GUser = require('../models/googleModel');
@@ -16,7 +15,7 @@ passport.deserializeUser(async function (id, done) {
         const user = await GUser.findById(id);
         done(null, user);
     } catch (err) {
-        done(err, null);
+        done(null, err);
     }
 });
 
@@ -28,7 +27,7 @@ passport.use(new GoogleStrategy({
 },
     async function (accessToken, refreshToken, profile, done) {
         try {
-            let user = await GUser.findOne({ googleId: profile.id });
+            let user = await GUser.findOne({ googleId: profile.id.toString() });
 
             if (user) {
                 return done(null, user);
@@ -47,7 +46,7 @@ passport.use(new GoogleStrategy({
             }
         } catch (err) {
             console.error("Error during Google authentication:", err);
-            return done(err, false);
+            return done(null, err);
         }
     }
 ));

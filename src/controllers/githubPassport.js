@@ -1,6 +1,5 @@
-require('dotenv').config();
 const passport = require('passport');
-const GithubStrategy = require('passport-github').Strategy;
+const GithubStrategy = require('passport-github2').Strategy;
 const GitUser = require('../models/githubModel');
 const { default: mongoose } = require('mongoose');
 const config = require('../config/config');
@@ -14,7 +13,7 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(async function (id, done) {
     try {
         const user = await GitUser.findById(id);
-        done(user, null);
+        done(null, user);
     } catch (error) {
         done(null, error);
     }
@@ -49,7 +48,7 @@ passport.use(new GithubStrategy({
             }
         } catch (err) {
             console.error("Error during GitHub authentication:", err);
-            return done(err, false);
+            return done(null, err);
         }
     }
 ));

@@ -1,4 +1,3 @@
-require('dotenv').config();
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
 const FUser = require('../models/facebookModel');
@@ -14,9 +13,9 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(async function (id, done) {
     try {
         const user = await FUser.findById(id);
-        done(user, null);
+        done(null, user);
     } catch (error) {
-        done(error, null);
+        done(null, error);
     }
 });
 
@@ -50,7 +49,7 @@ passport.use(new FacebookStrategy({
             }
         } catch (err) {
             console.error("Error during Facebook authentication:", err);
-            return done(err, false);
+            return done(null, err);
         }
     }
 ));
