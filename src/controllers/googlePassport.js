@@ -42,6 +42,7 @@ passport.use(new GoogleStrategy({
                 });
 
                 await newUser.save();  // Save the new user to the database
+                console.log(newUser);
                 return done(null, newUser);
             }
         } catch (err) {

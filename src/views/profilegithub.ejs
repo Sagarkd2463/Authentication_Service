@@ -19,6 +19,10 @@
         cursor: pointer;
         font-size: 17px;
     }
+
+    .logout-btn:hover {
+        transform: scale(1.1);
+    }
 </style>
 
 <body style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
@@ -27,6 +31,10 @@
         <strong style="font-size: 24px; margin-bottom: 8px;">Name: </strong>
         <p style="font-size: 20px; text-decoration: none; margin-top: 5px; margin-bottom: 16px;">
             <%= name %>
+        </p>
+        <strong style="font-size: 24px; margin-bottom: 8px;">UserName: </strong>
+        <p style="font-size: 20px; text-decoration: none; margin-top: 5px; margin-bottom: 16px;">
+            <%= username %>
         </p>
         <strong style="font-size: 24px; margin-bottom: 8px;">ProfileUrl: </strong>
         <p style="font-size: 20px; text-decoration: none; margin-top: 5px; margin-bottom: 16px;">

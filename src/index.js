@@ -18,6 +18,10 @@ require('./controllers/facebookPassport');
 require('./controllers/githubPassport');
 require('./controllers/linkedinPassport');
 
+// Import routes
+const passportRoutes = require('./routes/passportRoutes');
+const userRoutes = require('./routes/userRoute');
+
 // Configure EJS as the template engine
 app.set('view engine', 'ejs');
 
@@ -45,11 +49,6 @@ app.use((req, res, next) => {
 // Initialize Passport and session handling
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Import routes
-const successRoutes = require('./routes/success');
-const passportRoutes = require('./routes/passportRoutes');
-const userRoutes = require('./routes/userRoute');
 
 // Routes for pages
 app.get("/", (req, res) => {
@@ -85,7 +84,6 @@ app.get('/profile', (req, res) => {
 
 // Additional routes
 app.use("/", userRoutes);
-app.use("/", successRoutes);
 app.use("/", passportRoutes);
 
 // Start the server

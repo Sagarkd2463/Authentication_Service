@@ -24,7 +24,7 @@ passport.use(new LinkedinStrategy({
     clientID: config.linkedinAuthenticate.LINKEDIN_CLIENT_ID,
     clientSecret: config.linkedinAuthenticate.LINKEDIN_CLIENT_SECRET,
     callbackURL: 'http://localhost:5000/auth/linkedin/callback',
-    scope: ['r_emailaddress', 'r_liteprofile'],
+    scope: ['openid', 'profile', 'email'],
 },
     async function (accessToken, refreshToken, profile, done) {
         try {
@@ -44,10 +44,11 @@ passport.use(new LinkedinStrategy({
                 });
 
                 await newUser.save();  // Save the new user to the database
+                console.log(newUser);
                 return done(null, newUser);
             }
         } catch (err) {
-            console.error("Error during Facebook authentication:", err);
+            console.error("Error during Linkedin authentication:", err);
             return done(null, err);
         }
     }

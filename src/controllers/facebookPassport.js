@@ -39,12 +39,13 @@ passport.use(new FacebookStrategy({
                     facebookId: profile.id,
                     displayName: profile.displayName,
                     gender: profile.gender,
-                    email: profile.emails && profile.emails[0] ? profile.emails[0].value : '',  // Check if email exists
-                    photo: profile.photos && profile.photos[0] ? profile.photos[0].value : '',  // Check if photo exists
+                    email: profile.emails && profile.emails?.[0] ? profile.emails?.[0].value : '',  // Check if email exists
+                    photo: profile.photos && profile.photos?.[0] ? profile.photos?.[0].value : '',  // Check if photo exists
                     provider: profile.provider
                 });
 
                 await newUser.save();  // Save the new user to the database
+                console.log(newUser);
                 return done(null, newUser);
             }
         } catch (err) {
