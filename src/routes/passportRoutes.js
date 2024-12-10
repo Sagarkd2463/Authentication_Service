@@ -93,31 +93,6 @@ app.get('/auth/github/logout', (req, res) => {
     });
 });
 
-// LinkedIn Authentication
-app.get('/auth/linkedin',
-    passport.authenticate('linkedin', { state: "SOME STATE" })
-);
-
-app.get('/auth/linkedin/callback',
-    passport.authenticate('linkedin', { failureRedirect: '/login' }),
-    (req, res) => {
-        if (!req.user) {
-            return res.redirect('/login');
-        }
-        res.render('profilelinkedin', {
-            name: req.user.displayName || `${req.user.firstName} ${req.user.lastName}`,
-            email: req.user.emails?.[0].value,
-            photo: req.user.photos?.[0].value,
-            provider: req.user.provider
-        });
-    },
-    handleAuthError
-);
-
-app.get('/auth/linkedin/logout', (req, res) => {
-    req.logout(() => res.redirect('/'));
-});
-
 // Fallback route for unexpected errors
 app.use((err, req, res, next) => {
     console.error("Unexpected error:", err);

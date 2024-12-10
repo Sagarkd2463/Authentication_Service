@@ -16,7 +16,6 @@ require('./database/db'); // Ensure database connection loads before using model
 require('./controllers/googlePassport');
 require('./controllers/facebookPassport');
 require('./controllers/githubPassport');
-require('./controllers/linkedinPassport');
 
 // Import routes
 const passportRoutes = require('./routes/passportRoutes');
