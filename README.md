@@ -26,9 +26,49 @@ Validation: Joi
 Session & Cookies: express-session
 Templating (for social logins): EJS
 
-REQUIRED PACKAGES 
------------------------------------
-npm install express passport passport-google-oauth20 passport-facebook passport-github2 express-session bcryptjs jsonwebtoken joi dotenv
+REQUIRED PACKAGES
+-------------------------------------
+
+🔧 CORE DEPENDENCIES
+------------------------------------
+
+Package	                            Version	                Purpose
+------------------------------------------------------------------------------------------------------------
+express	                            ^4.19.2	                Fast, minimalist web framework for Node.js
+mongoose	                          ^8.4.0	                ODM to interact with MongoDB
+dotenv	                            ^16.4.5	                Load environment variables from .env
+ejs	                                ^3.1.10	                Template engine to render dynamic HTML pages
+body-parser	                        ^1.20.2	                Parses incoming request bodies
+express-session	                    ^1.18.0	                Session middleware for storing user sessions
+connect-flash	                      ^0.1.1	                Flash messages (used for showing success/errors)
+joi	                                ^17.13.3	              Data validation for inputs
+
+🔐 AUTHENTICATION & SECURITY
+------------------------------------------------------
+
+Package	                      Version	              Purpose
+----------------------------------------------------------------------------------------
+bcryptjs	                    ^2.4.3	              Password hashing and comparison
+jsonwebtoken	                ^9.0.2	              Creating and verifying JWTs (JSON Web Tokens)
+passport	                    ^0.7.0	              Main authentication middleware
+passport-google-oauth        	^2.0.0	              Google OAuth2 authentication strategy
+passport-github2	            ^0.1.12	              GitHub OAuth2 authentication strategy
+passport-facebook	            ^3.0.0	              Facebook OAuth2 authentication strategy
+
+📧 EMAIL & COMMUNICATION
+---------------------------------------------------
+
+Package	            Version	            Purpose
+------------------------------------------------------------------------------------
+nodemailer	        ^6.9.16	            Send password reset emails or notifications
+
+🛠 Dev Dependency
+------------------------------------
+
+Package	          Version	              Purpose
+----------------------------------------------------------------------------------------
+nodemon	          ^3.1.0	              Automatically restarts the server on file changes
+
 
 FOLDER STRUCTURE 
 ----------------------------
